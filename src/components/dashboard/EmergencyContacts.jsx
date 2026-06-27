@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Phone, MessageCircle, Instagram, Edit, Trash2, Crown, Star } from 'lucide-react';
+import { Plus, Phone, MessageCircle, Instagram, Edit, Trash2, Crown, Star, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { toast } from '@/components/ui/use-toast';
@@ -8,6 +8,7 @@ import { fetchEmergencyContacts, createContact, updateContact, deleteContact, se
 
 const EmergencyContacts = () => {
   const { user } = useAuth();
+  const userName = user?.user_metadata?.full_name || user?.email || 'Usuário';
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -95,6 +96,14 @@ const EmergencyContacts = () => {
     } catch (err) {
       toast({ title: "Erro ao remover", variant: "destructive" });
     }
+  };
+
+  const getWhatsAppShareUrl = (contact) => {
+    const phone = (contact.whatsapp || contact.phone).replace(/\D/g, '');
+    const message = encodeURIComponent(
+      `Olá! 😊\n\nVocê foi adicionado(a) como CONTATO DE EMERGÊNCIA de ${userName} no AhLembrei.\n\nCaso precise acessar informações de emergência, entre em contato.\n\nAhLembrei - Suas informações de emergência sempre à mão.`
+    );
+    return `https://wa.me/${phone}?text=${message}`;
   };
 
   const handleSetPrimary = async (contactId) => {
@@ -237,6 +246,12 @@ const EmergencyContacts = () => {
                     <Button onClick={() => window.open(`https://wa.me/${contact.whatsapp.replace(/\D/g, '')}`, '_blank')}
                       className="bg-green-600 hover:bg-green-700 text-white flex items-center justify-center">
                       <MessageCircle className="w-4 h-4 mr-2" /> WhatsApp
+                    </Button>
+                  )}
+                  {contact.whatsapp && (
+                    <Button onClick={() => window.open(getWhatsAppShareUrl(contact), '_blank')}
+                      variant="outline" className="border-green-500 text-green-600 hover:bg-green-50 flex items-center justify-center">
+                      <Share2 className="w-4 h-4 mr-2" /> Compartilhar
                     </Button>
                   )}
                   {contact.instagram && (
