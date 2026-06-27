@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import Dashboard from './pages/Dashboard';
 import EmergencyPage from './pages/EmergencyPage';
+import ResetPassword from './pages/ResetPassword';
 import { AuthProvider } from './contexts/SupabaseAuthContext';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/dashboard/*" element={<Dashboard />} />
             <Route path="/emergency/:userId" element={<EmergencyPage />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
