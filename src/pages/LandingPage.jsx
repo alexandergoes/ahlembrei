@@ -15,9 +15,12 @@ const LandingPage = () => {
   };
 
   const features = [
+    { icon: <Phone className="w-8 h-8" />, title: 'QR Code + Celular', description: 'Aponte a câmera do celular para o QR Code e acesse imediatamente contatos e dados médicos da pessoa.' },
+    { icon: <QrCode className="w-8 h-8" />, title: 'Código de Emergência', description: 'Digite o código único da pessoa e tenha acesso rápido a todas as informações de emergência.' },
+  ];
+
+  const secondaryFeatures = [
     { icon: <Shield className="w-8 h-8" />, title: 'Segurança Total', description: 'Seus dados protegidos com criptografia de ponta' },
-    { icon: <Phone className="w-8 h-8" />, title: 'Acesso Rápido', description: 'Contatos de emergência disponíveis instantaneamente' },
-    { icon: <QrCode className="w-8 h-8" />, title: 'QR Code Único', description: 'Acesso via QR Code para situações críticas' },
     { icon: <Heart className="w-8 h-8" />, title: 'Informações Médicas', description: 'Dados médicos importantes sempre acessíveis' },
     { icon: <Users className="w-8 h-8" />, title: 'Múltiplos Contatos', description: 'Gerencie vários contatos de emergência' },
     { icon: <FileText className="w-8 h-8" />, title: 'Documentos Seguros', description: 'Upload seguro de documentos importantes' },
@@ -119,22 +122,46 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
             className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Tudo que você precisa em emergências</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Prestando Socorro</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Funcionalidades pensadas para garantir que suas informações importantes
-              estejam sempre disponíveis quando mais precisar.
+              Duas formas rápidas de acessar informações de emergência de quem precisa de ajuda.
             </p>
           </motion.div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+          <div className="grid md:grid-cols-2 gap-8 mb-16">
             {features.map((feature, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="relative p-8 rounded-2xl bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-200 hover:shadow-xl transition-shadow overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-red-200/30 rounded-full -translate-y-1/2 translate-x-1/2" />
+                <div className="w-14 h-14 bg-red-600 rounded-xl flex items-center justify-center text-white mb-4">
+                  {feature.icon}
+                </div>
+                <div className="inline-block bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">PRESTAR SOCORRO</div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-gray-700 leading-relaxed">{feature.description}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Para quem quer se proteger</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Crie sua conta e mantenha seus dados sempre disponíveis para emergências.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {secondaryFeatures.map((feature, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
                 className="p-6 rounded-xl bg-white border border-gray-200 hover:shadow-lg transition-shadow">
                 <div className="w-12 h-12 gradient-bg rounded-lg flex items-center justify-center text-white mb-4">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                <p className="text-gray-600 text-sm">{feature.description}</p>
               </motion.div>
             ))}
           </div>
