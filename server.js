@@ -16,6 +16,6 @@ app.get('*', (req, res) => {
   res.sendFile(join(__dirname, 'dist', 'index.html'));
 });
 
-createServer(app).listen(PORT, () => {
+createServer(app).listen(PORT, '0.0.0.0', () => {
   console.log(`AhLembrei running on port ${PORT}`);
 });
