@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -9,23 +9,55 @@ import {
   Shield,
   ExternalLink,
   Crown,
-  Plus
+  Plus,
+  Download,
+  Copy,
+  Check
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { toast } from '@/components/ui/use-toast';
+import { QRCodeSVG } from 'qrcode.react';
 
 const Overview = () => {
   const { user } = useAuth();
+  const [showQRCode, setShowQRCode] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const generateQRCode = () => {
-    toast({ title: "QR Code gerado!", description: "Seu QR Code de emergência foi criado com sucesso." });
+  const emergencyUrl = `${window.location.origin}/emergency/${user.id}`;
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(emergencyUrl);
+    setCopied(true);
+    toast({ title: "Link copiado!", description: "O link da sua página de emergência foi copiado." });
+    setTimeout(() => setCopied(false), 2000);
   };
 
-  const shareEmergencyLink = () => {
-    const link = `${window.location.origin}/emergency/${user.id}`;
-    navigator.clipboard.writeText(link);
-    toast({ title: "Link copiado!", description: "O link da sua página de emergência foi copiado." });
+  const handleDownloadQR = () => {
+    const svg = document.getElementById('emergency-qrcode');
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      const png = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = 'ahlembrei-qrcode.png';
+      link.href = png;
+      link.click();
+    };
+    img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
   };
 
   const stats = [
@@ -73,10 +105,10 @@ const Overview = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <Button onClick={generateQRCode} className="gradient-bg text-white hover:opacity-90">
+            <Button onClick={() => setShowQRCode(true)} className="gradient-bg text-white hover:opacity-90">
               <QrCode className="w-5 h-5 mr-2" /> Gerar QR Code
             </Button>
-            <Button onClick={shareEmergencyLink} variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
+            <Button onClick={handleCopyLink} variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
               <ExternalLink className="w-5 h-5 mr-2" /> Compartilhar Link
             </Button>
           </div>
@@ -173,6 +205,31 @@ const Overview = () => {
           </div>
         </div>
       </motion.div>
+
+      <Dialog open={showQRCode} onOpenChange={setShowQRCode}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>QR Code de Emergência</DialogTitle>
+            <DialogDescription>
+              Escaneie para acessar sua página de emergência
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col items-center gap-4 py-4">
+            <div className="bg-white p-4 rounded-xl border">
+              <QRCodeSVG id="emergency-qrcode" value={emergencyUrl} size={220} level="M" />
+            </div>
+            <div className="flex gap-2 w-full">
+              <Button onClick={handleDownloadQR} variant="outline" className="flex-1">
+                <Download className="w-4 h-4 mr-2" /> Download
+              </Button>
+              <Button onClick={handleCopyLink} variant="outline" className="flex-1">
+                {copied ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
+                {copied ? 'Copiado' : 'Copiar Link'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

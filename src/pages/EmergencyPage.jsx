@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Phone, MessageCircle, Shield, Eye, EyeOff, Heart, FileText, AlertCircle } from 'lucide-react';
+import {
+  Phone, MessageCircle, Shield, Eye, EyeOff, Heart, FileText,
+  AlertCircle, MapPin, Send, ChevronDown, ChevronUp
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { fetchEmergencyProfile, fetchEmergencyContacts, fetchMedicalRecords, fetchDocuments, getDocumentPublicUrl } from '@/lib/emergencyApi';
+import { fetchEmergencyProfile, fetchEmergencyContacts, fetchMedicalRecords, fetchDocuments, getDocumentPublicUrl, logEmergencyAccess } from '@/lib/emergencyApi';
 
 const EmergencyPage = () => {
   const { userId } = useParams();
@@ -15,6 +18,10 @@ const EmergencyPage = () => {
   const [error, setError] = useState(null);
   const [showMedicalInfo, setShowMedicalInfo] = useState(false);
   const [showDocuments, setShowDocuments] = useState(false);
+  const [helperName, setHelperName] = useState('');
+  const [helperPhone, setHelperPhone] = useState('');
+  const [showHelperForm, setShowHelperForm] = useState(false);
+  const [helperLocation, setHelperLocation] = useState('');
 
   useEffect(() => {
     const loadData = async () => {
@@ -29,6 +36,7 @@ const EmergencyPage = () => {
         setContacts(contactsData);
         setMedical(medicalData);
         setDocuments(documentsData);
+        logEmergencyAccess(userId);
       } catch (err) {
         console.error('Error loading emergency data:', err);
         setError('Não foi possível carregar as informações de emergência.');
@@ -39,12 +47,33 @@ const EmergencyPage = () => {
     loadData();
   }, [userId]);
 
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setHelperLocation(`${pos.coords.latitude},${pos.coords.longitude}`),
+        () => {}
+      );
+    }
+  }, []);
+
   const handleCall = (phone) => {
     window.open(`tel:${phone}`, '_self');
   };
 
   const handleWhatsApp = (phone) => {
     window.open(`https://wa.me/${phone.replace(/\D/g, '')}`, '_blank');
+  };
+
+  const handleHelperWhatsApp = (contact) => {
+    const name = helperName || 'Alguém';
+    const phone = helperPhone || '(sem contato)';
+    const location = helperLocation
+      ? `Localização: https://www.google.com/maps?q=${helperLocation}`
+      : '';
+    const message = encodeURIComponent(
+      `Olá! ${name} está prestando socorro a ${profile?.full_name || 'um usuário'} do AhLembrei.${location ? `\n\n${location}` : ''}\n\nTelefone do socorrista: ${phone}\n\nEntre em contato o mais rápido possível.`
+    );
+    window.open(`https://wa.me/${contact.whatsapp.replace(/\D/g, '')}?text=${message}`, '_blank');
   };
 
   if (loading) {
@@ -126,6 +155,52 @@ const EmergencyPage = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="bg-white rounded-2xl p-6 shadow-lg mb-6"
+        >
+          <button
+            onClick={() => setShowHelperForm(!showHelperForm)}
+            className="w-full flex items-center justify-between"
+          >
+            <h2 className="text-xl font-bold text-gray-900 flex items-center">
+              <Send className="w-5 h-5 mr-2 text-green-600" />
+              {profile.full_name ? `Avise que está ajudando ${profile.full_name.split(' ')[0]}` : 'Estou ajudando'}
+            </h2>
+            {showHelperForm ? <ChevronUp className="w-5 h-5 text-gray-500" /> : <ChevronDown className="w-5 h-5 text-gray-500" />}
+          </button>
+
+          {showHelperForm && (
+            <div className="mt-4 space-y-4">
+              <p className="text-sm text-gray-600">
+                Preencha seus dados e avise o contato de emergência que você está prestando socorro.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input type="text" placeholder="Seu nome" value={helperName}
+                  onChange={(e) => setHelperName(e.target.value)}
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+                <input type="tel" placeholder="Seu telefone" value={helperPhone}
+                  onChange={(e) => setHelperPhone(e.target.value)}
+                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" />
+              </div>
+              {contacts.filter(c => c.whatsapp).map((contact) => (
+                <Button key={contact.id} onClick={() => handleHelperWhatsApp(contact)}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center py-3">
+                  <MessageCircle className="w-5 h-5 mr-2" />
+                  Enviar aviso para {contact.name} (WhatsApp)
+                </Button>
+              ))}
+              {helperLocation && (
+                <div className="flex items-center text-sm text-green-700">
+                  <MapPin className="w-4 h-4 mr-1" /> Sua localização será compartilhada
+                </div>
+              )}
+            </div>
+          )}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className="bg-white rounded-2xl p-6 shadow-lg mb-6"
         >
@@ -155,7 +230,12 @@ const EmergencyPage = () => {
                       <Phone className="w-5 h-5 mr-2" /> Ligar
                     </Button>
                     {contact.whatsapp && (
-                      <Button onClick={() => handleWhatsApp(contact.whatsapp)} className="bg-green-600 hover:bg-green-700 text-white flex items-center justify-center py-3">
+                      <Button onClick={() => {
+                        const msg = encodeURIComponent(
+                          `Estou acessando a página de emergência de ${profile?.full_name || 'um usuário'} do AhLembrei.${helperLocation ? `\n\nLocalização: https://www.google.com/maps?q=${helperLocation}` : ''}`
+                        );
+                        window.open(`https://wa.me/${contact.whatsapp.replace(/\D/g, '')}?text=${msg}`, '_blank');
+                      }} className="bg-green-600 hover:bg-green-700 text-white flex items-center justify-center py-3">
                         <MessageCircle className="w-5 h-5 mr-2" /> WhatsApp
                       </Button>
                     )}

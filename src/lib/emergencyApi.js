@@ -180,3 +180,12 @@ export const getDocumentPublicUrl = (storagePath) => {
 
   return data?.publicUrl;
 };
+
+export const logEmergencyAccess = async (userId) => {
+  const { error } = await supabase.from('emergency_logs').insert({
+    user_id: userId,
+    ip_address: null,
+    user_agent: navigator.userAgent,
+  });
+  if (error) console.error('Error logging access:', error);
+};

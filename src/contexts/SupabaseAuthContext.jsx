@@ -3,6 +3,16 @@ import { supabase } from '../lib/supabaseClient';
 
 const AuthContext = createContext(null);
 
+async function enrichUser(authUser) {
+  if (!authUser) return null;
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('plan_type')
+    .eq('id', authUser.id)
+    .single();
+  return { ...authUser, plan: profile?.plan_type || 'free' };
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -14,7 +24,7 @@ export function AuthProvider({ children }) {
         console.warn('getUser error:', error.message);
         setUser(null);
       } else {
-        setUser(data?.user ?? null);
+        setUser(await enrichUser(data?.user ?? null));
       }
       setLoading(false);
     };
@@ -23,8 +33,8 @@ export function AuthProvider({ children }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setUser(await enrichUser(session?.user ?? null));
       setLoading(false);
     });
 
