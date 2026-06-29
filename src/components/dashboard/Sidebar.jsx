@@ -21,9 +21,9 @@ const Sidebar = ({ isOpen, onClose }) => {
   const menuItems = [
     { icon: Home, label: 'Visão Geral', path: '/dashboard' },
     { icon: User, label: 'Meus Dados', path: '/dashboard/my-data' },
-    { icon: Users, label: 'Contatos de Emergência', path: '/dashboard/contacts' },
+    { icon: Users, label: 'Contatos de Emergência', path: '/dashboard/emergency-contacts' },
     { icon: FileText, label: 'Documentos', path: '/dashboard/documents' },
-    { icon: Heart, label: 'Informações Médicas', path: '/dashboard/medical' },
+    { icon: Heart, label: 'Informações Médicas', path: '/dashboard/medical-info' },
     { icon: CreditCard, label: 'Assinatura', path: '/dashboard/subscription' },
     ...(user?.role === 'admin' ? [{ icon: Settings, label: 'Admin', path: '/dashboard/admin' }] : []),
   ];

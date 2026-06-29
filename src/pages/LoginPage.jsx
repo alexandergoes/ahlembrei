@@ -99,26 +99,6 @@ const LoginPage = () => {
               <img className="w-5 h-5 mr-3" alt="Google logo" src="https://images.unsplash.com/photo-1678483789111-3a04c4628bd6" />
               Continuar com Google
             </Button>
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                onClick={() => handleSocialLogin('apple')}
-                variant="outline"
-                className="py-3 border-gray-300 hover:bg-gray-50"
-                disabled={loading}
-              >
-                <img className="w-5 h-5 mr-2" alt="Apple logo" src="https://images.unsplash.com/photo-1620829868801-8a443f0370f3" />
-                Apple
-              </Button>
-              <Button
-                onClick={() => handleSocialLogin('facebook')}
-                variant="outline"
-                className="py-3 border-gray-300 hover:bg-gray-50"
-                disabled={loading}
-              >
-                <img className="w-5 h-5 mr-2" alt="Facebook logo" src="https://images.unsplash.com/photo-1684577088653-f14e310d841b" />
-                Facebook
-              </Button>
-            </div>
           </div>
 
           <div className="relative mb-6">
