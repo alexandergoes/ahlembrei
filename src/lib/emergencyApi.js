@@ -181,6 +181,20 @@ export const getDocumentPublicUrl = (storagePath) => {
   return data?.publicUrl;
 };
 
+export const adminListUsers = async () => {
+  const { data, error } = await supabase.rpc('admin_list_users');
+  if (error) throw error;
+  return data || [];
+};
+
+export const adminUpdateUserRole = async (userId, newRole) => {
+  const { error } = await supabase.rpc('admin_update_user_role', {
+    target_user_id: userId,
+    new_role: newRole,
+  });
+  if (error) throw error;
+};
+
 export const logEmergencyAccess = async (userId) => {
   const { error } = await supabase.from('emergency_logs').insert({
     user_id: userId,

@@ -7,10 +7,10 @@ async function enrichUser(authUser) {
   if (!authUser) return null;
   const { data: profile } = await supabase
     .from('profiles')
-    .select('plan_type')
+    .select('plan_type, role')
     .eq('id', authUser.id)
     .single();
-  return { ...authUser, plan: profile?.plan_type || 'free' };
+  return { ...authUser, plan: profile?.plan_type || 'free', role: profile?.role || 'user' };
 }
 
 export function AuthProvider({ children }) {

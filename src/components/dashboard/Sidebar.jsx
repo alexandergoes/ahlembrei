@@ -9,10 +9,13 @@ import {
   Heart, 
   CreditCard, 
   X,
-  Home
+  Home,
+  Settings
 } from 'lucide-react';
+import { useAuth } from '@/contexts/SupabaseAuthContext';
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const { user } = useAuth();
   const location = useLocation();
 
   const menuItems = [
@@ -22,6 +25,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     { icon: FileText, label: 'Documentos', path: '/dashboard/documents' },
     { icon: Heart, label: 'Informações Médicas', path: '/dashboard/medical' },
     { icon: CreditCard, label: 'Assinatura', path: '/dashboard/subscription' },
+    ...(user?.role === 'admin' ? [{ icon: Settings, label: 'Admin', path: '/dashboard/admin' }] : []),
   ];
 
   const isActive = (path) => {

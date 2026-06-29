@@ -9,6 +9,7 @@ import EmergencyContacts from '@/components/dashboard/EmergencyContacts';
 import MedicalInfo from '@/components/dashboard/MedicalInfo';
 import Documents from '@/components/dashboard/Documents';
 import Subscription from '@/components/dashboard/Subscription';
+import AdminPage from '@/pages/AdminPage';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
@@ -48,6 +49,9 @@ const Dashboard = () => {
               <Route path="medical-info" element={<MedicalInfo />} />
               <Route path="documents" element={<Documents />} />
               <Route path="subscription" element={<Subscription />} />
+              {user?.role === 'admin' && (
+                <Route path="admin" element={<AdminPage />} />
+              )}
             </Routes>
           </div>
         </main>
