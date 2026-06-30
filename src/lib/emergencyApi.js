@@ -51,6 +51,7 @@ export const fetchEmergencyContacts = async (userId) => {
     .from('emergency_contacts')
     .select('*')
     .eq('user_id', userId)
+    .eq('authorized', true)
     .order('is_primary', { ascending: false });
 
   if (error) throw error;
@@ -171,6 +172,15 @@ export const deleteDocument = async (documentId) => {
     .eq('id', documentId);
 
   if (error) throw error;
+};
+
+export const fetchAllUsers = async () => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) return { success: false, data: [], error };
+  return { success: true, data, error: null };
 };
 
 export const getDocumentPublicUrl = (storagePath) => {

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Phone, MessageCircle, Shield, Eye, EyeOff, Heart, FileText,
-  AlertCircle, MapPin, Send, ChevronDown, ChevronUp
+  AlertCircle, MapPin, Send, ChevronDown, ChevronUp, Bell
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { fetchEmergencyProfile, fetchEmergencyContacts, fetchMedicalRecords, fetchDocuments, getDocumentPublicUrl, logEmergencyAccess } from '@/lib/emergencyApi';
@@ -75,6 +75,24 @@ const EmergencyPage = () => {
     handleWhatsApp(contact.whatsapp, message);
   };
 
+  const handleNotifyFamily = async () => {
+    const primaryContact = contacts.find(c => c.is_primary) || contacts[0];
+    if (!primaryContact?.whatsapp) return;
+
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 });
+      });
+      const { latitude, longitude } = position.coords;
+      const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+      const message = `Olá, estou ajudando ${profile.full_name} em uma emergência. Localização: ${mapsLink}`;
+      window.open(`https://wa.me/${primaryContact.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`, '_blank');
+    } catch {
+      const message = `Olá, estou ajudando ${profile.full_name} em uma emergência.`;
+      window.open(`https://wa.me/${primaryContact.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`, '_blank');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-red-50">
@@ -130,6 +148,28 @@ const EmergencyPage = () => {
               </div>
             </div>
           )}
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="bg-white rounded-2xl p-6 shadow-lg mb-6 border-2 border-red-300"
+        >
+          <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+            <Bell className="w-6 h-6 mr-2 text-red-600" />
+            Ajudando {profile.full_name || 'o usuário'}?
+          </h2>
+          <p className="text-gray-600 mb-4">
+            Se você está prestes a ajudar esta pessoa, clique no botão abaixo para notificar a família imediatamente.
+          </p>
+          <Button
+            onClick={handleNotifyFamily}
+            className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-6 text-lg"
+          >
+            <Bell className="w-6 h-6 mr-2" />
+            NOTIFICAR FAMÍLIA AGORA
+          </Button>
         </motion.div>
 
         {profile.health_plan_company && (

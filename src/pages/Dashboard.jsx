@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import Sidebar from '@/components/dashboard/Sidebar';
 import Header from '@/components/dashboard/Header';
@@ -9,12 +9,12 @@ import EmergencyContacts from '@/components/dashboard/EmergencyContacts';
 import MedicalInfo from '@/components/dashboard/MedicalInfo';
 import Documents from '@/components/dashboard/Documents';
 import Subscription from '@/components/dashboard/Subscription';
-import AdminPage from '@/pages/AdminPage';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -34,25 +34,33 @@ const Dashboard = () => {
     return null;
   }
 
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return <Overview onTabChange={setActiveTab} />;
+      case 'my-data':
+        return <MyData />;
+      case 'contacts':
+        return <EmergencyContacts />;
+      case 'medical':
+        return <MedicalInfo />;
+      case 'documents':
+        return <Documents />;
+      case 'subscription':
+        return <Subscription />;
+      default:
+        return <Overview />;
+    }
+  };
+
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} activeTab={activeTab} onTabChange={setActiveTab} />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header onMenuClick={() => setSidebarOpen(true)} />
+        <Header onMenuClick={() => setSidebarOpen(true)} activeTab={activeTab} onTabChange={setActiveTab} />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
           <div className="container mx-auto">
-            <Routes>
-              <Route path="/" element={<Navigate to="overview" />} />
-              <Route path="overview" element={<Overview />} />
-              <Route path="my-data" element={<MyData />} />
-              <Route path="emergency-contacts" element={<EmergencyContacts />} />
-              <Route path="medical-info" element={<MedicalInfo />} />
-              <Route path="documents" element={<Documents />} />
-              <Route path="subscription" element={<Subscription />} />
-              {user?.role === 'admin' && (
-                <Route path="admin" element={<AdminPage />} />
-              )}
-            </Routes>
+            {renderContent()}
           </div>
         </main>
       </div>

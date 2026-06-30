@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import {
   QrCode,
   Users,
@@ -8,11 +7,11 @@ import {
   Heart,
   Shield,
   ExternalLink,
-  Crown,
   Plus,
   Download,
   Copy,
-  Check
+  Check,
+  Crown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,7 +25,7 @@ import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { toast } from '@/components/ui/use-toast';
 import { QRCodeSVG } from 'qrcode.react';
 
-const Overview = () => {
+const Overview = ({ onTabChange }) => {
   const { user } = useAuth();
   const [showQRCode, setShowQRCode] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -67,15 +66,17 @@ const Overview = () => {
       max: user?.plan === 'free' ? '2' : user?.plan === 'basic' ? '5' : '∞',
       icon: Users,
       bgColor: 'bg-blue-100',
-      textColor: 'text-blue-600'
+      textColor: 'text-blue-600',
+      isPremium: false
     },
     {
       label: 'Documentos',
-      value: '0',
+      value: user?.plan === 'free' ? '0' : '0',
       max: user?.plan === 'free' ? '0' : '3',
       icon: FileText,
       bgColor: 'bg-green-100',
-      textColor: 'text-green-600'
+      textColor: 'text-green-600',
+      isPremium: user?.plan === 'free'
     },
     {
       label: 'Informações Médicas',
@@ -83,7 +84,8 @@ const Overview = () => {
       max: '1',
       icon: Heart,
       bgColor: 'bg-red-100',
-      textColor: 'text-red-600'
+      textColor: 'text-red-600',
+      isPremium: user?.plan === 'free'
     }
   ];
 
@@ -109,7 +111,8 @@ const Overview = () => {
               <QrCode className="w-5 h-5 mr-2" /> Gerar QR Code
             </Button>
             <Button onClick={handleCopyLink} variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
-              <ExternalLink className="w-5 h-5 mr-2" /> Compartilhar Link
+              {copied ? <Check className="w-5 h-5 mr-2" /> : <Copy className="w-5 h-5 mr-2" />}
+              {copied ? '✓ Copiado!' : 'Compartilhar Link'}
             </Button>
           </div>
         </div>
@@ -130,8 +133,10 @@ const Overview = () => {
                 <div className={`w-12 h-12 ${stat.bgColor} rounded-lg flex items-center justify-center`}>
                   <Icon className={`w-6 h-6 ${stat.textColor}`} />
                 </div>
-                {user?.plan === 'free' && stat.label !== 'Contatos de Emergência' && (
-                  <Crown className="w-5 h-5 text-yellow-500" />
+                {stat.isPremium && (
+                  <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded-full">
+                    Premium
+                  </span>
                 )}
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-1">{stat.label}</h3>
@@ -152,26 +157,26 @@ const Overview = () => {
       >
         <h3 className="text-xl font-bold text-gray-900 mb-6">Ações Rápidas</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link to="/dashboard/emergency-contacts"
+          <button onClick={() => onTabChange('contacts')}
             className="flex flex-col items-center p-4 rounded-xl border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors">
             <Plus className="w-8 h-8 text-blue-600 mb-2" />
             <span className="font-medium text-gray-900">Adicionar Contato</span>
-          </Link>
-          <Link to="/dashboard/my-data"
+          </button>
+          <button onClick={() => onTabChange('my-data')}
             className="flex flex-col items-center p-4 rounded-xl border border-gray-200 hover:border-green-300 hover:bg-green-50 transition-colors">
             <Shield className="w-8 h-8 text-green-600 mb-2" />
             <span className="font-medium text-gray-900">Atualizar Dados</span>
-          </Link>
-          <Link to="/dashboard/documents"
+          </button>
+          <button onClick={() => onTabChange('documents')}
             className="flex flex-col items-center p-4 rounded-xl border border-gray-200 hover:border-purple-300 hover:bg-purple-50 transition-colors">
             <FileText className="w-8 h-8 text-purple-600 mb-2" />
             <span className="font-medium text-gray-900">Upload Documentos</span>
-          </Link>
-          <Link to="/dashboard/subscription"
+          </button>
+          <button onClick={() => onTabChange('subscription')}
             className="flex flex-col items-center p-4 rounded-xl border border-gray-200 hover:border-yellow-300 hover:bg-yellow-50 transition-colors">
             <Crown className="w-8 h-8 text-yellow-600 mb-2" />
             <span className="font-medium text-gray-900">Upgrade Plano</span>
-          </Link>
+          </button>
         </div>
       </motion.div>
 
@@ -183,10 +188,10 @@ const Overview = () => {
       >
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-gray-900">Preview da Página de Emergência</h3>
-          <Link to={`/emergency/${user.id}`} target="_blank"
+          <a href={`/emergency/${user.id}`} target="_blank" rel="noopener noreferrer"
             className="text-red-600 hover:text-red-700 font-medium flex items-center">
             Ver página completa <ExternalLink className="w-4 h-4 ml-1" />
-          </Link>
+          </a>
         </div>
         <div className="bg-white rounded-xl p-4 border border-red-200">
           <div className="flex items-center space-x-4 mb-4">

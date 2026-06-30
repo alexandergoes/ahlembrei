@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-const Header = ({ onMenuClick }) => {
+const Header = ({ onMenuClick, activeTab, onTabChange }) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -65,7 +65,7 @@ const Header = ({ onMenuClick }) => {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigate('/dashboard/my-data')}>
+              <DropdownMenuItem onClick={() => onTabChange('my-data')}>
                 <User className="w-4 h-4 mr-2" />
                 <span>Perfil</span>
               </DropdownMenuItem>
