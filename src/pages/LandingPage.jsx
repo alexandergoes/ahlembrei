@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Heart, Phone, QrCode, Users, FileText, Search, ArrowRight, ChevronDown, AlertTriangle, CheckCircle, XCircle, MapPin, Send, Loader2 } from 'lucide-react';
@@ -150,6 +151,12 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen">
+      <Helmet>
+        <title>AhLembrei - Suas informações de emergência sempre acessíveis</title>
+        <meta name="description" content="Plataforma de segurança e emergência médica. Acesse contatos de emergência, informações médicas e dados vitais em segundos via QR Code ou link de emergência." />
+        <meta property="og:title" content="AhLembrei - Segurança e Emergência" />
+        <meta property="og:description" content="Proteja seus dados médicos e contatos de emergência. Acesso rápido em situações críticas." />
+      </Helmet>
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
