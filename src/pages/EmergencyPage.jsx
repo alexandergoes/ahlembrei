@@ -57,23 +57,22 @@ const EmergencyPage = () => {
   }, []);
 
   const handleCall = (phone) => {
-    window.open(`tel:${phone}`, '_self');
+    window.location.href = `tel:${phone}`;
   };
 
-  const handleWhatsApp = (phone) => {
-    window.open(`https://wa.me/${phone.replace(/\D/g, '')}`, '_blank');
+  const handleWhatsApp = (phone, message) => {
+    const url = `https://wa.me/${phone.replace(/\D/g, '')}${message ? `?text=${encodeURIComponent(message)}` : ''}`;
+    window.location.href = url;
   };
 
   const handleHelperWhatsApp = (contact) => {
     const name = helperName || 'Alguém';
     const phone = helperPhone || '(sem contato)';
     const location = helperLocation
-      ? `Localização: https://www.google.com/maps?q=${helperLocation}`
+      ? `\n\nLocalização: https://www.google.com/maps?q=${helperLocation}`
       : '';
-    const message = encodeURIComponent(
-      `Olá! ${name} está prestando socorro a ${profile?.full_name || 'um usuário'} do AhLembrei.${location ? `\n\n${location}` : ''}\n\nTelefone do socorrista: ${phone}\n\nEntre em contato o mais rápido possível.`
-    );
-    window.open(`https://wa.me/${contact.whatsapp.replace(/\D/g, '')}?text=${message}`, '_blank');
+    const message = `Olá! ${name} está prestando socorro a ${profile?.full_name || 'um usuário'} do AhLembrei.${location}\n\nTelefone do socorrista: ${phone}\n\nEntre em contato o mais rápido possível.`;
+    handleWhatsApp(contact.whatsapp, message);
   };
 
   if (loading) {
@@ -231,10 +230,8 @@ const EmergencyPage = () => {
                     </Button>
                     {contact.whatsapp && (
                       <Button onClick={() => {
-                        const msg = encodeURIComponent(
-                          `Estou acessando a página de emergência de ${profile?.full_name || 'um usuário'} do AhLembrei.${helperLocation ? `\n\nLocalização: https://www.google.com/maps?q=${helperLocation}` : ''}`
-                        );
-                        window.open(`https://wa.me/${contact.whatsapp.replace(/\D/g, '')}?text=${msg}`, '_blank');
+                        const msg = `Estou acessando a página de emergência de ${profile?.full_name || 'um usuário'} do AhLembrei.${helperLocation ? `\n\nLocalização: https://www.google.com/maps?q=${helperLocation}` : ''}`;
+                        handleWhatsApp(contact.whatsapp, msg);
                       }} className="bg-green-600 hover:bg-green-700 text-white flex items-center justify-center py-3">
                         <MessageCircle className="w-5 h-5 mr-2" /> WhatsApp
                       </Button>
@@ -331,11 +328,11 @@ const EmergencyPage = () => {
             {showDocuments ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {documents.map((doc) => (
-                  <Button
+                    <Button
                     key={doc.id}
                     onClick={() => {
                       const url = getDocumentPublicUrl(doc.storage_path);
-                      if (url) window.open(url, '_blank');
+                      if (url) window.location.href = url;
                     }}
                     variant="outline"
                     className="h-20 flex flex-col items-center justify-center"

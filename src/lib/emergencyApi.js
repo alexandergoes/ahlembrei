@@ -213,11 +213,71 @@ export const adminGetUserAudit = async (userId) => {
   return data || [];
 };
 
-export const logEmergencyAccess = async (userId) => {
+export const logEmergencyAccess = async (userId, { method = 'qrcode', status = 'SUCCESS', attempts = 0 } = {}) => {
   const { error } = await supabase.from('emergency_logs').insert({
     user_id: userId,
     ip_address: null,
     user_agent: navigator.userAgent,
+    access_method: method,
+    status,
+    attempt_count: attempts,
   });
   if (error) console.error('Error logging access:', error);
+};
+
+export const searchByHandle = async (handle) => {
+  const clean = handle.replace('@', '').trim().toLowerCase();
+  const { data, error } = await supabase.rpc('search_by_handle', { p_handle: clean });
+  if (error) throw error;
+  return data?.[0] || null;
+};
+
+export const getRandomQuestions = async (userId, count = 2) => {
+  const { data, error } = await supabase.rpc('get_random_questions', { p_user_id: userId, p_count: count });
+  if (error) throw error;
+  return data || [];
+};
+
+export const verifySecurityAnswer = async (questionId, answer) => {
+  const { data, error } = await supabase.rpc('verify_security_answer', {
+    p_question_id: questionId,
+    p_answer: answer.toLowerCase().trim(),
+  });
+  if (error) throw error;
+  return data;
+};
+
+export const logSecurityFailure = async (userId, attempts) => {
+  const { error } = await supabase.rpc('log_security_failure', {
+    p_user_id: userId,
+    p_attempts: attempts,
+  });
+  if (error) console.error('Error logging security failure:', error);
+};
+
+export const fetchSecurityQuestions = async (userId) => {
+  const { data, error } = await supabase
+    .from('security_questions')
+    .select('id, question_text')
+    .eq('user_id', userId);
+  if (error) throw error;
+  return data || [];
+};
+
+export const saveSecurityQuestions = async (userId, questions) => {
+  const hashed = questions.map(q => ({
+    user_id: userId,
+    question_text: q.question_text,
+    answer_hash: q.answer_hash,
+  }));
+  const { error: delError } = await supabase
+    .from('security_questions')
+    .delete()
+    .eq('user_id', userId);
+  if (delError) throw delError;
+
+  const { error } = await supabase
+    .from('security_questions')
+    .insert(hashed);
+  if (error) throw error;
 };

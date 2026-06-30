@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { User, Mail, Phone, Camera, Save, Shield, Calendar, Heart, FileText, CreditCard, AlertCircle } from 'lucide-react';
+import { User, Mail, Phone, Camera, Save, Shield, Calendar, Heart, FileText, CreditCard, AlertCircle, Key, Plus, Trash2, HelpCircle, AtSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { toast } from '@/components/ui/use-toast';
-import { fetchMyProfile, updateMyProfile } from '@/lib/emergencyApi';
+import { fetchMyProfile, updateMyProfile, fetchSecurityQuestions } from '@/lib/emergencyApi';
 
 const MyData = () => {
   const { user } = useAuth();
@@ -22,24 +22,48 @@ const MyData = () => {
     emergency_message: '',
     settings_show_medical: true,
     settings_show_documents: true,
-    photo_url: ''
+    photo_url: '',
+    handle: ''
   });
+
+  const [securityQuestions, setSecurityQuestions] = useState([
+    { question: '', answer: '' },
+    { question: '', answer: '' },
+    { question: '', answer: '' },
+    { question: '', answer: '' },
+  ]);
+  const [savingSecurity, setSavingSecurity] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
       try {
         if (!user?.id) return;
         
-        const profile = await fetchMyProfile(user.id);
+        const [profile, existingQuestions] = await Promise.all([
+          fetchMyProfile(user.id),
+          fetchSecurityQuestions(user.id),
+        ]);
         
         if (profile) {
           setFormData(prev => ({
             ...prev,
             ...profile,
-            // Ensure boolean fields have defaults if null
             settings_show_medical: profile.settings_show_medical ?? true,
             settings_show_documents: profile.settings_show_documents ?? true,
           }));
+
+          if (existingQuestions?.length > 0) {
+            const filled = [
+              { question: '', answer: '' },
+              { question: '', answer: '' },
+              { question: '', answer: '' },
+              { question: '', answer: '' },
+            ];
+            existingQuestions.forEach((q, i) => {
+              if (i < 4) filled[i] = { question: q.question_text, answer: '', id: q.id };
+            });
+            setSecurityQuestions(filled);
+          }
         } else {
           // If no profile exists, pre-fill from auth user metadata if available
           setFormData(prev => ({
@@ -152,6 +176,26 @@ const MyData = () => {
                     placeholder="Seu nome completo"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Seu @apelido (handle)
+                </label>
+                <div className="relative">
+                  <AtSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    value={formData.handle || ''}
+                    onChange={(e) => setFormData({ ...formData, handle: e.target.value.replace(/[^a-z0-9]/gi, '').toLowerCase() })}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder="ex: joao-k7m9"
+                  />
+                </div>
+                <p className="mt-1 text-xs text-gray-500">
+                  Seu apelido único para buscas de emergência. Mínimo 8 caracteres, apenas letras e números.
+                  {formData.handle && formData.handle.length < 8 && <span className="text-orange-500 block">Mínimo de 8 caracteres.</span>}
+                </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -385,6 +429,100 @@ const MyData = () => {
             </label>
           </div>
         </div>
+      </motion.div>
+
+      {/* Security Questions Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200"
+      >
+        <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+          <Key className="w-6 h-6 mr-2 text-green-600" />
+          Perguntas de Segurança (MFA)
+        </h3>
+        <p className="text-sm text-gray-600 mb-6">
+          Cadastre 4 perguntas que <strong>só você</strong> sabe responder. 
+          Em caso de perda/roubo do celular, o socorrista vai pedir para você 
+          responder 2 perguntas aleatórias para liberar seus dados.
+        </p>
+
+        <div className="space-y-4">
+          {securityQuestions.map((item, i) => (
+            <div key={i} className="p-4 bg-gray-50 rounded-xl">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700">Pergunta {i + 1}</span>
+              </div>
+              <input
+                type="text"
+                value={item.question}
+                onChange={(e) => {
+                  const updated = [...securityQuestions];
+                  updated[i] = { ...updated[i], question: e.target.value };
+                  setSecurityQuestions(updated);
+                }}
+                placeholder="Ex: Qual o nome da sua primeira professora?"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-2 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+              <input
+                type="text"
+                value={item.answer}
+                onChange={(e) => {
+                  const updated = [...securityQuestions];
+                  updated[i] = { ...updated[i], answer: e.target.value };
+                  setSecurityQuestions(updated);
+                }}
+                placeholder="Resposta (não será salva em texto plano)"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              />
+            </div>
+          ))}
+        </div>
+
+        <ol className="text-xs text-gray-500 mt-4 mb-4 list-decimal list-inside space-y-1">
+          <li>Use respostas que você NUNCA esquece</li>
+          <li>Evite nomes de familiares, CPF, RG ou datas</li>
+          <li>Não compartilhe as respostas com ninguém</li>
+        </ol>
+
+        <Button
+          onClick={async () => {
+            const incomplete = securityQuestions.some(q => !q.question.trim() || !q.answer.trim());
+            if (incomplete) {
+              toast({ title: "Preencha todas as 4 perguntas e respostas", variant: "destructive" });
+              return;
+            }
+            if (formData.handle && formData.handle.length < 8) {
+              toast({ title: "Seu @apelido precisa ter no mínimo 8 caracteres", variant: "destructive" });
+              return;
+            }
+            setSavingSecurity(true);
+            try {
+              const { supabase } = await import('@/lib/supabaseClient');
+              await supabase.rpc('delete_security_questions', { p_user_id: user.id });
+              for (const sq of securityQuestions) {
+                await supabase.rpc('save_security_question', {
+                  p_user_id: user.id,
+                  p_question_text: sq.question.trim(),
+                  p_answer: sq.answer.trim().toLowerCase(),
+                });
+              }
+              if (formData.handle) {
+                await updateMyProfile(user.id, { handle: formData.handle });
+              }
+              toast({ title: "Segurança configurada com sucesso!" });
+            } catch (err) {
+              console.error(err);
+              toast({ title: "Erro ao salvar perguntas", description: err.message, variant: "destructive" });
+            }
+            setSavingSecurity(false);
+          }}
+          disabled={savingSecurity}
+          className="w-full bg-green-600 hover:bg-green-700 text-white py-3 font-medium"
+        >
+          {savingSecurity ? 'Salvando...' : 'Salvar Perguntas de Segurança'}
+        </Button>
       </motion.div>
     </div>
   );
