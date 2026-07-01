@@ -51,7 +51,6 @@ export const fetchEmergencyContacts = async (userId) => {
     .from('emergency_contacts')
     .select('*')
     .eq('user_id', userId)
-    .eq('authorized', true)
     .order('is_primary', { ascending: false });
 
   if (error) throw error;
@@ -175,10 +174,7 @@ export const deleteDocument = async (documentId) => {
 };
 
 export const fetchAllUsers = async () => {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .order('created_at', { ascending: false });
+  const { data, error } = await supabase.rpc('admin_list_all_users');
   if (error) return { success: false, data: [], error };
   return { success: true, data, error: null };
 };
@@ -221,6 +217,11 @@ export const adminGetUserAudit = async (userId) => {
   const { data, error } = await supabase.rpc('admin_get_user_audit', { target_user_id: userId });
   if (error) throw error;
   return data || [];
+};
+
+export const adminDeleteUser = async (userId) => {
+  const { error } = await supabase.rpc('admin_delete_user', { target_user_id: userId });
+  if (error) throw error;
 };
 
 export const logEmergencyAccess = async (userId, { method = 'qrcode', status = 'SUCCESS', attempts = 0 } = {}) => {
