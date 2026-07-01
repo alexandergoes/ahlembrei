@@ -31,13 +31,22 @@ export const fetchEmergencyProfile = async (userId) => {
       full_name,
       photo_url,
       birth_date,
+      phone,
       health_plan_company,
       health_plan_type,
       health_plan_card_number,
       health_plan_phone,
       emergency_message,
       settings_show_medical,
-      settings_show_documents
+      settings_show_documents,
+      address_zipcode,
+      address_street,
+      address_number,
+      address_complement,
+      address_neighborhood,
+      address_city,
+      address_state,
+      address_country
     `)
     .eq('id', userId)
     .single();
@@ -246,6 +255,20 @@ export const logEmergencyAccess = async (userId, { method = 'qrcode', status = '
     attempt_count: attempts,
   });
   if (error) console.error('Error logging access:', error);
+};
+
+export const updateMyAddress = async (address) => {
+  const { error } = await supabase.rpc('update_my_address', {
+    p_zipcode: address.address_zipcode || null,
+    p_street: address.address_street || null,
+    p_number: address.address_number || null,
+    p_complement: address.address_complement || null,
+    p_neighborhood: address.address_neighborhood || null,
+    p_city: address.address_city || null,
+    p_state: address.address_state || null,
+    p_country: address.address_country || 'Brasil',
+  });
+  if (error) throw error;
 };
 
 export const searchByHandle = async (handle) => {

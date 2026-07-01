@@ -172,11 +172,50 @@ const EmergencyPage = () => {
           </Button>
         </motion.div>
 
-        {profile.health_plan_company && (
+        {(profile.address_street || profile.address_city) && (
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
+            className="bg-white rounded-2xl p-6 shadow-lg mb-6"
+          >
+            <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
+              <MapPin className="w-5 h-5 mr-2 text-red-600" />
+              Localização de Referência
+            </h2>
+            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+              <p className="text-blue-900 font-medium">📍 Endereço do perfil:</p>
+              <p className="text-blue-800 mt-1">
+                {profile.address_street && `${profile.address_street}${profile.address_number ? `, ${profile.address_number}` : ''}`}
+                {profile.address_complement && ` — ${profile.address_complement}`}
+                <br />
+                {profile.address_neighborhood && `${profile.address_neighborhood}, `}{profile.address_city && `${profile.address_city}`}{profile.address_state && ` — ${profile.address_state}`}
+                {profile.address_zipcode && <><br />CEP: {profile.address_zipcode}</>}
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {!profile.address_street && !profile.address_city && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white rounded-2xl p-6 shadow-lg mb-6"
+          >
+            <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
+              <MapPin className="w-5 h-5 mr-2 text-gray-400" />
+              Localização de Referência
+            </h2>
+            <p className="text-gray-500 text-sm">Localização não informada pelo usuário.</p>
+          </motion.div>
+        )}
+
+        {profile.health_plan_company && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
             className="bg-white rounded-2xl p-6 shadow-lg mb-6"
           >
             <h2 className="text-lg font-bold text-gray-900 mb-3">Convênio Médico</h2>

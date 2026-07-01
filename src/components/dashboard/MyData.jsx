@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { User, Mail, Phone, Camera, Save, Shield, Calendar, Heart, FileText, CreditCard, AlertCircle, Key, Plus, Trash2, HelpCircle, AtSign } from 'lucide-react';
+import { User, Mail, Phone, Camera, Save, Shield, Calendar, Heart, FileText, CreditCard, AlertCircle, Key, Plus, Trash2, HelpCircle, AtSign, MapPin, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { toast } from '@/components/ui/use-toast';
@@ -23,7 +23,15 @@ const MyData = () => {
     settings_show_medical: true,
     settings_show_documents: true,
     photo_url: '',
-    handle: ''
+    handle: '',
+    address_zipcode: '',
+    address_street: '',
+    address_number: '',
+    address_complement: '',
+    address_neighborhood: '',
+    address_city: '',
+    address_state: '',
+    address_country: 'Brasil'
   });
 
   const [securityQuestions, setSecurityQuestions] = useState([
@@ -105,6 +113,30 @@ const MyData = () => {
       });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const buscarCep = async (cep) => {
+    const cepLimpo = cep.replace(/\D/g, '')
+    if (cepLimpo.length !== 8) return
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`)
+      const data = await res.json()
+      if (!data.erro) {
+        setFormData(prev => ({
+          ...prev,
+          address_street: data.logradouro || '',
+          address_neighborhood: data.bairro || '',
+          address_city: data.localidade || '',
+          address_state: data.uf || '',
+          address_country: 'Brasil'
+        }))
+        toast({ title: "Endereço preenchido automaticamente" })
+      } else {
+        toast({ title: "CEP não encontrado", variant: "destructive" })
+      }
+    } catch {
+      toast({ title: "Erro ao buscar CEP", variant: "destructive" })
     }
   };
 
@@ -349,6 +381,113 @@ const MyData = () => {
               </div>
             </div>
           </div>
+
+            {/* Endereço */}
+            <div className="space-y-4 pt-2">
+              <h3 className="text-lg font-semibold text-gray-800 border-b pb-2 flex items-center">
+                <MapPin className="w-5 h-5 mr-2 text-red-500" />
+                Endereço
+              </h3>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  CEP <button type="button" onClick={() => buscarCep(formData.address_zipcode)} className="text-blue-600 hover:text-blue-700 text-xs font-normal ml-1">(buscar)</button>
+                </label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    value={formData.address_zipcode || ''}
+                    onChange={(e) => setFormData({ ...formData, address_zipcode: e.target.value })}
+                    onBlur={(e) => buscarCep(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    placeholder="00000-000"
+                    maxLength={9}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Logradouro</label>
+                  <input
+                    type="text"
+                    value={formData.address_street || ''}
+                    onChange={(e) => setFormData({ ...formData, address_street: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Rua, Avenida..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Número</label>
+                  <input
+                    type="text"
+                    value={formData.address_number || ''}
+                    onChange={(e) => setFormData({ ...formData, address_number: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="S/N"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Complemento</label>
+                  <input
+                    type="text"
+                    value={formData.address_complement || ''}
+                    onChange={(e) => setFormData({ ...formData, address_complement: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Apto, Bloco..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Bairro</label>
+                  <input
+                    type="text"
+                    value={formData.address_neighborhood || ''}
+                    onChange={(e) => setFormData({ ...formData, address_neighborhood: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Bairro"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Cidade</label>
+                  <input
+                    type="text"
+                    value={formData.address_city || ''}
+                    onChange={(e) => setFormData({ ...formData, address_city: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Cidade"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Estado (UF)</label>
+                  <input
+                    type="text"
+                    value={formData.address_state || ''}
+                    onChange={(e) => setFormData({ ...formData, address_state: e.target.value })}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="SP"
+                    maxLength={2}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">País</label>
+                <input
+                  type="text"
+                  value={formData.address_country || ''}
+                  onChange={(e) => setFormData({ ...formData, address_country: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Brasil"
+                />
+              </div>
+            </div>
 
           <Button
             type="submit"

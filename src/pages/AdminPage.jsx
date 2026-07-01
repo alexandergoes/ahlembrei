@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Shield, AlertCircle, ArrowLeft, Search, CheckCircle, XCircle,
   Eye, Phone, MessageCircle, Heart, FileText, Activity, Clock,
-  Mail, User, Calendar, CreditCard
+  Mail, User, Calendar, CreditCard, MapPin
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
@@ -153,7 +153,7 @@ const UserDetailsModal = ({ user: targetUser, onClose }) => {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
           ) : tab === 'profile' ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <><div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <InfoRow icon={User} label="Nome" value={targetUser.full_name} />
               <InfoRow icon={Mail} label="Email" value={targetUser.email} />
               {targetUser.display_name && <InfoRow icon={User} label="Nome de exibição" value={targetUser.display_name} />}
@@ -166,6 +166,18 @@ const UserDetailsModal = ({ user: targetUser, onClose }) => {
                 <InfoRow icon={Calendar} label="Desativado em" value={new Date(targetUser.deactivated_at).toLocaleDateString('pt-BR')} />
               )}
             </div>
+            {(targetUser.address_street || targetUser.address_city) && (
+              <div className="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-200">
+                <h4 className="text-sm font-semibold text-blue-800 mb-2 flex items-center"><MapPin className="w-4 h-4 mr-1.5" />Endereço</h4>
+                <p className="text-sm text-blue-900">
+                  {targetUser.address_street && `${targetUser.address_street}${targetUser.address_number ? `, ${targetUser.address_number}` : ''}`}
+                  {targetUser.address_complement && ` — ${targetUser.address_complement}`}
+                  <br />
+                  {targetUser.address_neighborhood && `${targetUser.address_neighborhood}, `}{targetUser.address_city && `${targetUser.address_city}`}{targetUser.address_state && ` — ${targetUser.address_state}`}
+                  {targetUser.address_zipcode && <><br />CEP: {targetUser.address_zipcode}</>}
+                </p>
+              </div>
+            )}</>
           ) : tab === 'contacts' ? (
             contacts.length === 0 ? (
               <p className="text-gray-400 text-center py-8">Nenhum contato de emergência.</p>

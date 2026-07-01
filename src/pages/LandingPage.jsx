@@ -132,21 +132,21 @@ const LandingPage = () => {
   };
 
   const features = [
-    { icon: <Phone className="w-8 h-8" />, title: 'QR Code + Celular', description: 'Aponte a câmera do celular para o QR Code e acesse imediatamente contatos e dados médicos da pessoa.' },
-    { icon: <QrCode className="w-8 h-8" />, title: 'Busca por Apelido', description: 'Digite o @apelido da pessoa e, se necessário, responda o desafio de segurança para liberar os dados.' },
+    { icon: <Phone className="w-8 h-8" />, title: 'QR Code + Celular', description: 'Aponte a câmera do celular para o QR Code e acesse imediatamente contatos e dados médicos da pessoa — mesmo se o celular dela estiver roubado, quebrado ou sem bateria.' },
+    { icon: <QrCode className="w-8 h-8" />, title: 'Busca por Apelido', description: 'Digite o @apelido da pessoa em qualquer navegador e, se necessário, responda o desafio de segurança para liberar os dados.' },
   ];
 
   const secondaryFeatures = [
-    { icon: <Shield className="w-8 h-8" />, title: 'Segurança Total', description: 'Seus dados protegidos com criptografia de ponta' },
-    { icon: <Heart className="w-8 h-8" />, title: 'Informações Médicas', description: 'Dados médicos importantes sempre acessíveis' },
-    { icon: <Users className="w-8 h-8" />, title: 'Múltiplos Contatos', description: 'Gerencie vários contatos de emergência' },
-    { icon: <FileText className="w-8 h-8" />, title: 'Documentos Seguros', description: 'Upload seguro de documentos importantes' },
+    { icon: <Shield className="w-8 h-8" />, title: 'Segurança Total', description: 'Dados protegidos com criptografia e MFA via perguntas pessoais' },
+    { icon: <Heart className="w-8 h-8" />, title: 'Informações Médicas', description: 'Tipo sanguíneo, alergias e condições sempre acessíveis' },
+    { icon: <Users className="w-8 h-8" />, title: 'Múltiplos Contatos', description: 'Gerencie vários contatos de emergência com WhatsApp integrado' },
+    { icon: <FileText className="w-8 h-8" />, title: 'Documentos Seguros', description: 'Upload seguro de documentos importantes para emergências' },
   ];
 
   const steps = [
-    { num: '01', title: 'Crie sua conta', desc: 'Cadastre seus contatos e informações médicas em menos de 5 minutos.' },
-    { num: '02', title: 'Configure sua segurança', desc: 'Crie seu @apelido único e cadastre 4 perguntas pessoais.' },
-    { num: '03', title: 'Compartilhe seu QR Code', desc: 'Cole no celular, na carteira e compartilhe seu @apelido com contatos de confiança.' },
+    { num: '01', title: 'Crie sua conta', desc: 'Cadastre contatos, dados médicos e agora também endereço e localização em menos de 5 minutos.' },
+    { num: '02', title: 'Configure sua segurança', desc: 'Crie seu @apelido único e cadastre 4 perguntas pessoais para MFA.' },
+    { num: '03', title: 'Imprima seu QR Code', desc: 'Cole na carteira, no celular e compartilhe seu @apelido com contatos de confiança. Seus dados ficam acessíveis mesmo sem o aparelho.' },
   ];
 
   return (
@@ -187,7 +187,7 @@ const LandingPage = () => {
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <div className="inline-flex items-center bg-red-500/30 backdrop-blur-sm rounded-full px-4 py-1.5 mb-6">
               <div className="w-2 h-2 bg-red-200 rounded-full animate-pulse mr-2" />
-              <span className="text-red-100 text-sm font-medium">ACESSO DE EMERGÊNCIA</span>
+              <span className="text-red-100 text-sm font-medium">SEUS DADOS DE EMERGÊNCIA, MESMO SEM O CELULAR</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">
               PRESTAR
@@ -195,7 +195,7 @@ const LandingPage = () => {
               <span className="text-red-200">SOCORRO</span>
             </h1>
             <p className="text-xl text-red-100 mb-8 max-w-2xl mx-auto">
-              Alguém precisa de ajuda? Use o QR Code da pessoa ou busque pelo @apelido dela.
+              Perdeu o celular? Roubaram? Quebrou? Seus contatos, documentos e dados médicos continuam acessíveis — via QR Code físico ou busca por @apelido em qualquer navegador.
             </p>
 
             <form onSubmit={handleEmergencyAccess} className="max-w-lg mx-auto mb-4">
@@ -351,7 +351,7 @@ const LandingPage = () => {
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
             className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Como funciona</h2>
-            <p className="text-xl text-gray-600">Em 3 passos simples você protege suas informações</p>
+            <p className="text-xl text-gray-600">Em 3 passos simples — e seus dados ficam acessíveis mesmo sem o celular</p>
           </motion.div>
           <div className="grid md:grid-cols-3 gap-8">
             {steps.map((step, i) => (
@@ -374,7 +374,7 @@ const LandingPage = () => {
             className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Prestando Socorro</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Duas formas rápidas de acessar informações de emergência de quem precisa de ajuda.
+              Duas formas rápidas de acessar informações de emergência — funciona mesmo se o celular da pessoa estiver roubado, quebrado ou sem bateria.
             </p>
           </motion.div>
 
@@ -398,8 +398,17 @@ const LandingPage = () => {
             className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Para quem quer se proteger</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Crie sua conta e mantenha seus dados sempre disponíveis para emergências.
+              E se você perder o celular agora? Com o AhLembrei, suas informações de emergência não dependem do aparelho. Um QR Code na carteira. Um @apelido na memória de quem confia.
             </p>
+            <div className="mt-6 max-w-lg mx-auto bg-amber-50 border border-amber-200 rounded-xl p-4 text-left">
+              <p className="text-sm text-amber-800 font-medium mb-2">Diferente dos dados de emergência do celular (Medical ID / Emergency Info):</p>
+              <ul className="text-sm text-amber-700 space-y-1">
+                <li>❌ O celular foi <strong>roubado</strong>? Seus dados continuam acessíveis</li>
+                <li>❌ A tela <strong>quebrou</strong>? O QR Code na carteira funciona</li>
+                <li>❌ A bateria <strong>descarregou</strong>? A busca por @apelido em qualquer navegador resolve</li>
+                <li>❌ O aparelho está <strong>travado</strong>? As perguntas de segurança liberam o acesso</li>
+              </ul>
+            </div>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -422,10 +431,10 @@ const LandingPage = () => {
         <div className="max-w-4xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
             <h2 className="text-4xl font-bold text-white mb-6">
-              Pronto para proteger suas informações?
+              Proteja seu acesso de emergência
             </h2>
             <p className="text-xl text-blue-100 mb-8">
-              Cadastre-se gratuitamente e tenha seus dados de emergência sempre disponíveis.
+              Cadastre-se gratuitamente. Seus dados de emergência disponíveis mesmo sem o celular.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button onClick={() => navigate('/register')}
