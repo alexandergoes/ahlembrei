@@ -1,5 +1,16 @@
 -- ============================================================
--- BLOCO 1: RPC simplificado para listar users com email
+-- BLOCO A: Garantir função is_admin() com SECURITY DEFINER
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+  SELECT EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin');
+$$;
+
+-- ============================================================
+-- BLOCO B: RPC para listar users com email (JOIN auth.users)
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.admin_list_all_users()
 RETURNS TABLE (
@@ -16,18 +27,17 @@ AS $$
 $$;
 
 -- ============================================================
--- BLOCO 2: admin_toggle_user_active com proteção último admin
+-- BLOCO C: admin_toggle_user_active com proteção último admin
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.admin_toggle_user_active(target_user_id UUID)
 RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE _admin_id UUID; _new_status BOOLEAN; _admin_count INTEGER;
 BEGIN
   _admin_id := auth.uid();
-  IF NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = _admin_id AND role = 'admin') THEN
+  IF NOT public.is_admin() THEN
     RAISE EXCEPTION 'Only admins can toggle user status';
   END IF;
   SELECT NOT COALESCE(active, true) INTO _new_status FROM public.profiles WHERE id = target_user_id;
-  -- Proteger último admin ativo
   IF _new_status = false AND EXISTS (SELECT 1 FROM public.profiles WHERE id = target_user_id AND role = 'admin') THEN
     SELECT COUNT(*) INTO _admin_count FROM public.profiles WHERE role = 'admin' AND active = true AND id != target_user_id;
     IF _admin_count = 0 THEN RAISE EXCEPTION 'Não é possível desativar o último administrador do sistema'; END IF;
@@ -42,18 +52,17 @@ END;
 $$;
 
 -- ============================================================
--- BLOCO 3: admin_update_user_role com proteção último admin
+-- BLOCO D: admin_update_user_role com proteção último admin
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.admin_update_user_role(target_user_id UUID, new_role TEXT)
 RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE _admin_id UUID; _admin_count INTEGER;
 BEGIN
   _admin_id := auth.uid();
-  IF NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = _admin_id AND role = 'admin') THEN
+  IF NOT public.is_admin() THEN
     RAISE EXCEPTION 'Only admins can update roles';
   END IF;
   IF new_role NOT IN ('user', 'admin') THEN RAISE EXCEPTION 'Invalid role: %', new_role; END IF;
-  -- Proteger último admin ao se auto-rebaixar
   IF target_user_id = _admin_id AND new_role != 'admin' THEN
     SELECT COUNT(*) INTO _admin_count FROM public.profiles WHERE role = 'admin' AND active = true;
     IF _admin_count <= 1 THEN RAISE EXCEPTION 'Não é possível remover o último administrador do sistema'; END IF;
@@ -65,17 +74,16 @@ END;
 $$;
 
 -- ============================================================
--- BLOCO 4: admin_delete_user (soft delete)
+-- BLOCO E: admin_delete_user (soft delete) com proteção último admin
 -- ============================================================
 CREATE OR REPLACE FUNCTION public.admin_delete_user(target_user_id UUID)
 RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE _admin_id UUID; _admin_count INTEGER;
 BEGIN
   _admin_id := auth.uid();
-  IF NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = _admin_id AND role = 'admin') THEN
+  IF NOT public.is_admin() THEN
     RAISE EXCEPTION 'Only admins can delete users';
   END IF;
-  -- Proteger último admin
   IF (SELECT role FROM public.profiles WHERE id = target_user_id) = 'admin' THEN
     SELECT COUNT(*) INTO _admin_count FROM public.profiles WHERE role = 'admin' AND active = true AND id != target_user_id;
     IF _admin_count = 0 THEN RAISE EXCEPTION 'Não é possível excluir o último administrador do sistema'; END IF;
@@ -87,4 +95,20 @@ BEGIN
   INSERT INTO public.admin_audit_log (admin_id, action, target_user_id, details)
   VALUES (_admin_id, 'delete_user', target_user_id, '{}'::jsonb);
 END;
+$$;
+
+-- ============================================================
+-- BLOCO F: admin_log_action — registrar ação manualmente
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.admin_log_action(
+  p_action_type TEXT, p_target_user_id UUID,
+  p_old_value TEXT DEFAULT NULL, p_new_value TEXT DEFAULT NULL
+)
+RETURNS void
+LANGUAGE sql
+SECURITY DEFINER
+AS $$
+  INSERT INTO public.admin_audit_log (admin_id, action, target_user_id, details)
+  VALUES (auth.uid(), p_action_type, p_target_user_id,
+    jsonb_build_object('old_value', p_old_value, 'new_value', p_new_value));
 $$;
