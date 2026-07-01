@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Shield, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 // Updated import to use the correct context
@@ -10,7 +10,7 @@ import { supabase } from '@/lib/supabaseClient';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  // Using signInWithEmail from the standardized context
+  const location = useLocation();
   const { signInWithEmail, resetPassword, user, loading: authLoading } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
@@ -19,12 +19,13 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const redirectTo = new URLSearchParams(location.search).get('redirect') || '/dashboard';
+
   useEffect(() => {
-    // Redirect if already logged in
     if (!authLoading && user) {
-      navigate('/dashboard');
+      navigate(redirectTo);
     }
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, navigate, redirectTo]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +36,7 @@ const LoginPage = () => {
         title: "Login realizado com sucesso!",
         description: "Bem-vindo de volta ao AhLembrei.",
       });
-      navigate('/dashboard');
+      navigate(redirectTo);
     } catch (error) {
       toast({
         title: "Erro no login",
@@ -52,7 +53,7 @@ const LoginPage = () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/dashboard`,
+        redirectTo: `${window.location.origin}${redirectTo}`,
       },
     });
     if (error) {

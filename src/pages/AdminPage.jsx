@@ -15,7 +15,7 @@ const AdminPage = () => {
 
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate('/login');
+      navigate('/login?redirect=/admin');
       return;
     }
     const loadUsers = async () => {
