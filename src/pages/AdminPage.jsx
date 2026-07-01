@@ -12,7 +12,6 @@ import {
   fetchAllUsers,
   adminToggleUserActive,
   adminUpdateUserRole,
-  adminDeleteUser,
   fetchEmergencyContacts,
   fetchMedicalRecords,
   fetchDocuments,
@@ -245,6 +244,13 @@ const UserDetailsModal = ({ user: targetUser, onClose }) => {
   );
 };
 
+const SortableHeader = ({ label, sortKey, sort, onSort }) => (
+  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700 select-none"
+    onClick={() => onSort(sortKey)}>
+    {label}{sort.key === sortKey ? (sort.dir === 'asc' ? ' ▲' : ' ▼') : ''}
+  </th>
+);
+
 const InfoRow = ({ icon: Icon, label, value }) => (
   <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
     <Icon className="w-4 h-4 text-gray-400 flex-shrink-0" />
@@ -266,6 +272,31 @@ const AdminPage = () => {
   const [toast, setToast] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [filters, setFilters] = useState({ status: 'all', role: 'all', plan: 'all' });
+  const [sort, setSort] = useState({ key: 'created_at', dir: 'desc' });
+
+  const handleSort = (key) => {
+    setSort(prev => prev.key === key ? { key, dir: prev.dir === 'asc' ? 'desc' : 'asc' } : { key, dir: 'asc' });
+  };
+
+  const filtered = search
+    ? users.filter(u =>
+        (u.full_name || '').toLowerCase().includes(search.toLowerCase()) ||
+        (u.email || '').toLowerCase().includes(search.toLowerCase())
+      )
+    : users;
+
+  const sorted = [...filtered]
+    .filter(u => filters.status === 'all' || (filters.status === 'active' && u.active !== false) || (filters.status === 'inactive' && u.active === false))
+    .filter(u => filters.role === 'all' || u.role === filters.role)
+    .filter(u => filters.plan === 'all' || u.plan_type === filters.plan)
+    .sort((a, b) => {
+      const dir = sort.dir === 'asc' ? 1 : -1;
+      if (sort.key === 'created_at') return dir * ((new Date(a.created_at||0)) - (new Date(b.created_at||0)));
+      const va = (a[sort.key] || '').toString().toLowerCase();
+      const vb = (b[sort.key] || '').toString().toLowerCase();
+      return dir * va.localeCompare(vb);
+    });
   const [showLogs, setShowLogs] = useState(false);
   const [logsTab, setLogsTab] = useState('audit');
   const [auditLogs, setAuditLogs] = useState([]);
@@ -323,9 +354,6 @@ const AdminPage = () => {
       } else if (action === 'demote') {
         await adminUpdateUserRole(target.id, 'user');
         showToast(`${target.full_name} rebaixado para usuário`);
-      } else if (action === 'delete') {
-        await adminDeleteUser(target.id);
-        showToast(`${target.full_name} excluído (soft delete)`);
       }
       await loadUsers();
     } catch (err) {
@@ -347,19 +375,10 @@ const AdminPage = () => {
         return { title: 'Promover para admin', message: `Tem certeza que deseja promover ${name} a administrador?`, danger: false };
       case 'demote':
         return { title: 'Rebaixar para usuário', message: `Tem certeza que deseja rebaixar ${name} para usuário comum?`, danger: true };
-      case 'delete':
-        return { title: 'Excluir usuário', message: `Esta ação irá desativar a conta de ${name} permanentemente.`, danger: true };
       default:
         return { title: 'Confirmação', message: 'Tem certeza?', danger: false };
     }
   };
-
-  const filtered = search
-    ? users.filter(u =>
-        (u.full_name || '').toLowerCase().includes(search.toLowerCase()) ||
-        (u.email || '').toLowerCase().includes(search.toLowerCase())
-      )
-    : users;
 
   if (authLoading || (loading && users.length === 0)) {
     return (
@@ -421,17 +440,32 @@ const AdminPage = () => {
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-4">
-          <div className="relative max-w-xs">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="mb-4 flex flex-wrap gap-3 items-end">
+          <div className="relative max-w-xs flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Buscar por nome ou email..."
-              value={search}
+            <input type="text" placeholder="Buscar por nome ou email..." value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
           </div>
+          <select value={filters.status} onChange={e => setFilters(f => ({...f, status: e.target.value}))}
+            className="px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option value="all">Todos os status</option>
+            <option value="active">Ativo</option>
+            <option value="inactive">Inativo</option>
+          </select>
+          <select value={filters.role} onChange={e => setFilters(f => ({...f, role: e.target.value}))}
+            className="px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option value="all">Todas as roles</option>
+            <option value="user">Usuário</option>
+            <option value="admin">Admin</option>
+          </select>
+          <select value={filters.plan} onChange={e => setFilters(f => ({...f, plan: e.target.value}))}
+            className="px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option value="all">Todos os planos</option>
+            <option value="free">Free</option>
+            <option value="basic">Basic</option>
+            <option value="premium">Premium</option>
+          </select>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
@@ -439,17 +473,17 @@ const AdminPage = () => {
             <table className="w-full">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Nome</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Plano</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Role</th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Criado em</th>
+                  <SortableHeader label="Nome" sortKey="full_name" sort={sort} onSort={handleSort} />
+                  <SortableHeader label="Email" sortKey="email" sort={sort} onSort={handleSort} />
+                  <SortableHeader label="Status" sortKey="active" sort={sort} onSort={handleSort} />
+                  <SortableHeader label="Plano" sortKey="plan_type" sort={sort} onSort={handleSort} />
+                  <SortableHeader label="Role" sortKey="role" sort={sort} onSort={handleSort} />
+                  <SortableHeader label="Criado em" sortKey="created_at" sort={sort} onSort={handleSort} />
                   <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {filtered.map((u) => (
+                {sorted.map((u) => (
                   <tr key={u.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">{u.full_name || '---'}</td>
                     <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">{u.email || '---'}</td>
@@ -512,16 +546,11 @@ const AdminPage = () => {
                             className="px-2.5 py-1 text-xs font-medium rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 disabled:opacity-50"
                           >Promover</button>
                         )}
-                        <button
-                          onClick={() => setConfirm({ action: 'delete', target: u })}
-                          disabled={actionLoading}
-                          className="px-2.5 py-1 text-xs font-medium rounded-lg bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50"
-                        >Excluir</button>
                       </div>
                     </td>
                   </tr>
                 ))}
-                {filtered.length === 0 && (
+                {sorted.length === 0 && (
                   <tr>
                     <td colSpan={7} className="px-4 py-12 text-center text-gray-400 text-sm">
                       {search ? 'Nenhum usuário encontrado para esta busca.' : 'Nenhum usuário cadastrado.'}

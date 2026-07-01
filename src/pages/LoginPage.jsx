@@ -19,10 +19,11 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/dashboard';
+
   useEffect(() => {
-    // Redirect if already logged in
     if (!authLoading && user) {
-      navigate('/dashboard');
+      navigate(redirectTo, { replace: true });
     }
   }, [user, authLoading, navigate]);
 
@@ -35,7 +36,7 @@ const LoginPage = () => {
         title: "Login realizado com sucesso!",
         description: "Bem-vindo de volta ao AhLembrei.",
       });
-      navigate('/dashboard');
+      navigate(redirectTo, { replace: true });
     } catch (error) {
       toast({
         title: "Erro no login",
@@ -52,7 +53,7 @@ const LoginPage = () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/dashboard`,
+        redirectTo: `${window.location.origin}${redirectTo}`,
       },
     });
     if (error) {
