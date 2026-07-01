@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Shield, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Shield, ShieldOff, AlertCircle, ArrowLeft, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
-import { fetchAllUsers } from '@/lib/emergencyApi';
+import { fetchAllUsers, adminListUsers } from '@/lib/emergencyApi';
 
 const AdminPage = () => {
   const { user, loading: authLoading } = useAuth();
@@ -21,12 +21,19 @@ const AdminPage = () => {
     const loadUsers = async () => {
       setLoading(true);
       setError(null);
-      const result = await fetchAllUsers();
-      if (!result.success) {
-        setError(result.error?.message || 'Erro ao carregar usuários');
-        setUsers([]);
-      } else {
-        setUsers(result.data);
+      try {
+        let data;
+        try {
+          const result = await adminListUsers({});
+          data = result;
+        } catch {
+          const result = await fetchAllUsers();
+          if (!result.success) throw result.error;
+          data = result.data;
+        }
+        setUsers(data || []);
+      } catch (err) {
+        setError(err?.message || 'Erro ao carregar usuários. Verifique se você é administrador.');
       }
       setLoading(false);
     };
@@ -38,7 +45,7 @@ const AdminPage = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Carregando usuários...</p>
+          <p className="text-gray-600">Carregando...</p>
         </div>
       </div>
     );
@@ -48,9 +55,12 @@ const AdminPage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="text-center max-w-md">
-          <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Erro</h1>
-          <p className="text-gray-600">{error}</p>
+          <ShieldOff className="w-16 h-16 text-red-400 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Acesso Restrito</h1>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <Button onClick={() => navigate('/dashboard')} variant="outline">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Voltar ao Dashboard
+          </Button>
         </div>
       </div>
     );
@@ -60,7 +70,7 @@ const AdminPage = () => {
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="mb-6">
-          <Button onClick={() => navigate(-1)} variant="ghost" className="text-gray-600">
+          <Button onClick={() => navigate('/dashboard')} variant="ghost" className="text-gray-600">
             <ArrowLeft className="w-5 h-5 mr-2" /> Voltar
           </Button>
         </div>
@@ -73,7 +83,10 @@ const AdminPage = () => {
             <Shield className="w-8 h-8 text-blue-600" />
             <h1 className="text-3xl font-bold text-gray-900">Painel Administrativo</h1>
           </div>
-          <p className="text-gray-600">Total de usuários: {users.length}</p>
+          <div className="flex items-center space-x-2 text-gray-600">
+            <Users className="w-5 h-5" />
+            <p>Total de usuários: {users.length}</p>
+          </div>
         </motion.div>
 
         <motion.div
