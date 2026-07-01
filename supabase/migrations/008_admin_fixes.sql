@@ -112,3 +112,55 @@ AS $$
   VALUES (auth.uid(), p_action_type, p_target_user_id,
     jsonb_build_object('old_value', p_old_value, 'new_value', p_new_value));
 $$;
+
+-- ============================================================
+-- BLOCO G: RPC para listar TODOS os logs de auditoria admin
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.admin_list_audit_logs()
+RETURNS TABLE (id UUID, admin_id UUID, admin_name TEXT, action TEXT, target_name TEXT, details JSONB, created_at TIMESTAMPTZ)
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  IF NOT public.is_admin() THEN
+    RAISE EXCEPTION 'Only admins can view logs';
+  END IF;
+  RETURN QUERY
+  SELECT al.id, al.admin_id, adm.full_name AS admin_name, al.action,
+         COALESCE(tgt.full_name, tgt.email::TEXT) AS target_name,
+         al.details, al.created_at
+  FROM public.admin_audit_log al
+  LEFT JOIN public.profiles adm ON adm.id = al.admin_id
+  LEFT JOIN public.profiles tgt ON tgt.id = al.target_user_id
+  LEFT JOIN auth.users u ON u.id = al.target_user_id
+  ORDER BY al.created_at DESC
+  LIMIT 200;
+END;
+$$;
+
+-- ============================================================
+-- BLOCO H: Ajustar RLS da emergency_logs para admin ler todos
+-- ============================================================
+DROP POLICY IF EXISTS "Users can view own logs" ON public.emergency_logs;
+CREATE POLICY "Users can view own logs"
+  ON public.emergency_logs FOR SELECT
+  USING (auth.uid() = user_id OR public.is_admin());
+
+-- ============================================================
+-- BLOCO I: RPC para listar TODOS os acessos de emergência
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.admin_list_emergency_logs()
+RETURNS TABLE (id UUID, user_id UUID, user_name TEXT, accessed_at TIMESTAMPTZ, ip_address TEXT, user_agent TEXT)
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  IF NOT public.is_admin() THEN
+    RAISE EXCEPTION 'Only admins can view logs';
+  END IF;
+  RETURN QUERY
+  SELECT el.id, el.user_id, COALESCE(p.full_name, u.email::TEXT) AS user_name,
+         el.accessed_at, el.ip_address, el.user_agent
+  FROM public.emergency_logs el
+  LEFT JOIN public.profiles p ON p.id = el.user_id
+  LEFT JOIN auth.users u ON u.id = el.user_id
+  ORDER BY el.accessed_at DESC
+  LIMIT 200;
+END;
+$$;

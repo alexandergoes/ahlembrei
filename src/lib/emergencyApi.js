@@ -224,6 +224,18 @@ export const adminDeleteUser = async (userId) => {
   if (error) throw error;
 };
 
+export const adminListAuditLogs = async () => {
+  const { data, error } = await supabase.rpc('admin_list_audit_logs');
+  if (error) throw error;
+  return data || [];
+};
+
+export const adminListEmergencyLogs = async () => {
+  const { data, error } = await supabase.rpc('admin_list_emergency_logs');
+  if (error) throw error;
+  return data || [];
+};
+
 export const logEmergencyAccess = async (userId, { method = 'qrcode', status = 'SUCCESS', attempts = 0 } = {}) => {
   const { error } = await supabase.from('emergency_logs').insert({
     user_id: userId,
