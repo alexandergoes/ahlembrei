@@ -14,7 +14,9 @@ ALTER TABLE public.profiles
 
 -- ============================================================
 -- Atualizar RPC admin_list_all_users para incluir address + phone
+-- DROP necessário pois a tabela de retorno (OUT params) mudou
 -- ============================================================
+DROP FUNCTION IF EXISTS public.admin_list_all_users();
 CREATE OR REPLACE FUNCTION public.admin_list_all_users()
 RETURNS TABLE (
   id UUID, full_name TEXT, email TEXT, phone TEXT,
