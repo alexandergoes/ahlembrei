@@ -1,25 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
-  QrCode,
-  Users,
-  FileText,
-  Heart,
-  Shield,
-  ExternalLink,
-  Plus,
-  Download,
-  Copy,
-  Check,
-  Crown
+  QrCode, Users, FileText, Heart, Shield, ExternalLink,
+  Plus, Download, Copy, Check, Crown, AlertCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from '@/components/ui/dialog';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { toast } from '@/components/ui/use-toast';
@@ -29,8 +16,27 @@ const Overview = ({ onTabChange }) => {
   const { user } = useAuth();
   const [showQRCode, setShowQRCode] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [profile, setProfile] = useState(null);
 
   const emergencyUrl = `${window.location.origin}/emergency/${user.id}`;
+
+  useEffect(() => {
+    if (!user?.id) return;
+    import('@/lib/emergencyApi').then(({ fetchMyProfile, fetchEmergencyContacts }) => {
+      fetchMyProfile(user.id).then(async (data) => {
+        const contacts = await fetchEmergencyContacts(user.id);
+        setProfile({ ...data, contactCount: contacts.length, hasPrimary: contacts.some(c => c.is_primary) });
+      });
+    });
+  }, [user?.id]);
+
+  const missing = [];
+  if (profile) {
+    if (!profile.full_name) missing.push({ field: 'my-data', label: 'Nome completo' });
+    if (!profile.phone) missing.push({ field: 'my-data', label: 'Telefone pessoal' });
+    if (!profile.handle) missing.push({ field: 'my-data', label: 'Apelido' });
+    if (profile.contactCount === 0) missing.push({ field: 'contacts', label: 'Contato de emergência' });
+  }
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(emergencyUrl);
@@ -62,50 +68,55 @@ const Overview = ({ onTabChange }) => {
   const stats = [
     {
       label: 'Contatos de Emergência',
-      value: '2',
+      value: profile?.contactCount ?? '0',
       max: user?.plan === 'free' ? '2' : user?.plan === 'basic' ? '5' : '∞',
-      icon: Users,
-      bgColor: 'bg-blue-100',
-      textColor: 'text-blue-600',
-      isPremium: false
+      icon: Users, bgColor: 'bg-blue-100', textColor: 'text-blue-600', isPremium: false,
     },
     {
       label: 'Documentos',
-      value: user?.plan === 'free' ? '0' : '0',
+      value: profile?.plan_type === 'free' ? '0' : '0',
       max: user?.plan === 'free' ? '0' : '3',
-      icon: FileText,
-      bgColor: 'bg-green-100',
-      textColor: 'text-green-600',
-      isPremium: user?.plan === 'free'
+      icon: FileText, bgColor: 'bg-green-100', textColor: 'text-green-600', isPremium: user?.plan === 'free',
     },
     {
       label: 'Informações Médicas',
       value: user?.plan === 'free' ? '0' : '1',
       max: '1',
-      icon: Heart,
-      bgColor: 'bg-red-100',
-      textColor: 'text-red-600',
-      isPremium: user?.plan === 'free'
-    }
+      icon: Heart, bgColor: 'bg-red-100', textColor: 'text-red-600', isPremium: user?.plan === 'free',
+    },
   ];
 
   return (
     <div className="space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200"
-      >
+      {missing.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+          <div className="flex items-start space-x-3">
+            <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
+            <div>
+              <p className="text-amber-800 font-medium text-sm">Seu perfil está incompleto</p>
+              <ul className="mt-1 space-y-1">
+                {missing.map((item) => (
+                  <li key={item.field}>
+                    <button onClick={() => onTabChange(item.field)}
+                      className="text-amber-700 hover:text-amber-900 text-sm underline">
+                      Cadastrar {item.label.toLowerCase()}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
           <div className="mb-6 lg:mb-0">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Bem-vindo ao seu painel de emergência
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Suas informações estão seguras e prontas para situações críticas.
-            </p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Bem-vindo ao seu painel de emergência</h2>
+            <p className="text-gray-600 text-lg">Suas informações estão seguras e prontas para situações críticas.</p>
           </div>
-
           <div className="flex flex-col sm:flex-row gap-3">
             <Button onClick={() => setShowQRCode(true)} className="gradient-bg text-white hover:opacity-90">
               <QrCode className="w-5 h-5 mr-2" /> Gerar QR Code
@@ -122,21 +133,15 @@ const Overview = ({ onTabChange }) => {
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+            <motion.div key={stat.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200"
-            >
+              className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
               <div className="flex items-center justify-between mb-4">
                 <div className={`w-12 h-12 ${stat.bgColor} rounded-lg flex items-center justify-center`}>
                   <Icon className={`w-6 h-6 ${stat.textColor}`} />
                 </div>
                 {stat.isPremium && (
-                  <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded-full">
-                    Premium
-                  </span>
+                  <span className="bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded-full">Premium</span>
                 )}
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-1">{stat.label}</h3>
@@ -149,12 +154,8 @@ const Overview = ({ onTabChange }) => {
         })}
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+        className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
         <h3 className="text-xl font-bold text-gray-900 mb-6">Ações Rápidas</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <button onClick={() => onTabChange('contacts')}
@@ -180,12 +181,8 @@ const Overview = ({ onTabChange }) => {
         </div>
       </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 border border-red-200"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
+        className="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 border border-red-200">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold text-gray-900">Preview da Página de Emergência</h3>
           <a href={`/emergency/${user.id}`} target="_blank" rel="noopener noreferrer"
@@ -199,7 +196,7 @@ const Overview = ({ onTabChange }) => {
               <Shield className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h4 className="text-xl font-bold text-gray-900">{user?.user_metadata?.full_name || 'Usuário'}</h4>
+              <h4 className="text-xl font-bold text-gray-900">{profile?.full_name || 'Usuário'}</h4>
               <span className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium">PÁGINA DE EMERGÊNCIA</span>
             </div>
           </div>
@@ -215,9 +212,7 @@ const Overview = ({ onTabChange }) => {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>QR Code de Emergência</DialogTitle>
-            <DialogDescription>
-              Escaneie para acessar sua página de emergência
-            </DialogDescription>
+            <DialogDescription>Escaneie para acessar sua página de emergência</DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center gap-4 py-4">
             <div className="bg-white p-4 rounded-xl border">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { User, Mail, Phone, Camera, Save, Shield, Calendar, Heart, FileText, CreditCard, AlertCircle, Key, Plus, Trash2, HelpCircle, AtSign, MapPin, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -140,11 +140,33 @@ const MyData = () => {
     }
   };
 
-  const handlePhotoUpload = () => {
-    toast({
-      title: "🚧 Upload de foto em breve",
-      description: "A funcionalidade de upload de imagens será implementada em breve! 🚀",
-    });
+  const handlePhotoClick = () => fileInputRef.current?.click();
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast({ title: "Arquivo muito grande", description: "Máximo 2MB.", variant: "destructive" });
+      return;
+    }
+    if (!file.type.startsWith('image/')) {
+      toast({ title: "Formato inválido", description: "Selecione uma imagem.", variant: "destructive" });
+      return;
+    }
+    try {
+      setSaving(true);
+      const ext = file.name.split('.').pop();
+      const filePath = `${user.id}/photo.${ext}`;
+      const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      setFormData(prev => ({ ...prev, photo_url: publicUrl }));
+      toast({ title: "Foto enviada!" });
+    } catch (err) {
+      toast({ title: "Erro ao enviar foto", description: err.message, variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) {
@@ -178,13 +200,14 @@ const MyData = () => {
                   <User className="w-10 h-10 text-blue-600" />
                 )}
               </div>
-              <button
-                type="button"
-                onClick={handlePhotoUpload}
-                className="absolute -bottom-2 -right-2 w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors shadow-md border-2 border-white"
-              >
-                <Camera className="w-4 h-4" />
-              </button>
+                <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
+                <button
+                  type="button"
+                  onClick={handlePhotoClick}
+                  className="absolute -bottom-2 -right-2 w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors shadow-md border-2 border-white"
+                >
+                  <Camera className="w-4 h-4" />
+                </button>
             </div>
           </div>
 
