@@ -54,16 +54,17 @@ const Subscription = () => {
     },
   };
 
+  const planKeys = { básico: 'basic', premium: 'premium' };
+
   const handleChoosePlan = async (planName) => {
-    if (planName.toLowerCase() === user.plan) {
+    const planKey = planKeys[planName.toLowerCase()];
+    if (planKey === user.plan) {
       toast({
         title: 'Este é o seu plano atual',
         description: 'Você já está inscrito neste plano.',
       });
       return;
     }
-
-    const planKey = planName.toLowerCase() === 'básico' ? 'basic' : 'premium';
 
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -142,7 +143,7 @@ const Subscription = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-end">
         {Object.values(plans).map((plan, index) => {
-          const isCurrentPlan = plan.name.toLowerCase() === user.plan;
+          const isCurrentPlan = planKeys[plan.name.toLowerCase()] === user.plan;
           return (
             <motion.div
               key={plan.name}
