@@ -1,13 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Crown, Zap, CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/lib/supabaseClient';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/components/ui/use-toast';
 
 const Subscription = () => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
+  const [searchParams] = useSearchParams();
   const [billingCycle, setBillingCycle] = useState('monthly');
+
+  useEffect(() => {
+    const payment = searchParams.get('payment');
+    const plan = searchParams.get('plan');
+    if (payment === 'success' && plan) {
+      supabase.rpc('update_my_plan', { new_plan: plan }).then(({ error }) => {
+        if (error) {
+          toast({ title: 'Erro ao ativar plano', description: error.message });
+        } else {
+          toast({ title: 'Plano ativado com sucesso!' });
+          refreshUser();
+          window.history.replaceState({}, '', '/dashboard');
+        }
+      });
+    }
+  }, []);
 
   const plans = {
     free: {
@@ -23,7 +42,7 @@ const Subscription = () => {
     },
     basic: {
       name: 'Básico',
-      price: { monthly: 9.9, yearly: 99 },
+      price: { monthly: 3.99, yearly: 39 },
       features: [
         { text: 'Até 5 contatos', included: true },
         { text: 'QR Code personalizado', included: true },
@@ -34,7 +53,7 @@ const Subscription = () => {
     },
     premium: {
       name: 'Premium',
-      price: { monthly: 19.9, yearly: 199 },
+      price: { monthly: 9.9, yearly: 99 },
       features: [
         { text: 'Contatos ilimitados', included: true },
         { text: 'QR Code personalizado', included: true },
@@ -46,24 +65,49 @@ const Subscription = () => {
     },
   };
 
-  const handleChoosePlan = (planName) => {
+  const handleChoosePlan = async (planName) => {
     if (planName.toLowerCase() === user.plan) {
       toast({
-        title: "Este é o seu plano atual",
-        description: "Você já está inscrito neste plano.",
+        title: 'Este é o seu plano atual',
+        description: 'Você já está inscrito neste plano.',
       });
       return;
     }
-    
-    toast({
-      title: "🚧 Integração de pagamento pendente",
-      description: "Por favor, configure o Stripe para ativar as assinaturas. Você pode solicitar isso em sua próxima mensagem! 🚀",
-    });
+
+    const planKey = planName.toLowerCase() === 'básico' ? 'basic' : 'premium';
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const edgeUrl = `${supabaseUrl}/functions/v1/smooth-api`;
+
+    try {
+      const res = await fetch(edgeUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${anonKey}`,
+        },
+        body: JSON.stringify({
+          plan: planKey,
+          billing: billingCycle,
+          userId: user.id,
+          userEmail: user.email,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+
+      window.location.href = data.init_point;
+    } catch (err) {
+      toast({
+        title: 'Erro ao criar assinatura',
+        description: err.message,
+      });
+    }
   };
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -76,8 +120,7 @@ const Subscription = () => {
           Escolha o plano que melhor se adapta às suas necessidades e 
           tenha total tranquilidade.
         </p>
-        
-        {/* Billing Cycle Toggle */}
+
         <div className="mt-8 flex justify-center">
           <div className="bg-white p-1 rounded-full shadow-sm border">
             <button
@@ -107,11 +150,9 @@ const Subscription = () => {
         </div>
       </motion.div>
 
-      {/* Plans Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-end">
         {Object.values(plans).map((plan, index) => {
           const isCurrentPlan = plan.name.toLowerCase() === user.plan;
-          
           return (
             <motion.div
               key={plan.name}
@@ -138,7 +179,7 @@ const Subscription = () => {
                   </span>
                 </div>
               </div>
-              
+
               <ul className="space-y-4 mb-8">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-center space-x-3">
@@ -153,10 +194,10 @@ const Subscription = () => {
                   </li>
                 ))}
               </ul>
-              
+
               <Button
                 onClick={() => handleChoosePlan(plan.name)}
-                disabled={isCurrentPlan}
+                disabled={isCurrentPlan || plan.name === 'Free'}
                 className={`w-full py-3 ${
                   isCurrentPlan
                     ? 'bg-gray-200 text-gray-500'
@@ -165,14 +206,13 @@ const Subscription = () => {
                       : 'bg-blue-600 text-white hover:bg-blue-700'
                 }`}
               >
-                {isCurrentPlan ? 'Plano Atual' : `Escolher ${plan.name}`}
+                {plan.name === 'Free' ? 'Grátis' : isCurrentPlan ? 'Plano Atual' : `Escolher ${plan.name}`}
               </Button>
             </motion.div>
           );
         })}
       </div>
 
-      {/* Current Plan Summary */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -180,22 +220,11 @@ const Subscription = () => {
         className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200"
       >
         <h3 className="text-xl font-bold text-gray-900 mb-4">Resumo da sua assinatura</h3>
-        
         <div className="flex items-center justify-between">
           <div>
             <p className="text-gray-600">Seu plano atual é</p>
             <p className="text-2xl font-bold text-blue-600 capitalize">{user.plan}</p>
           </div>
-          
-          <Button
-            onClick={() => toast({
-              title: "🚧 Esta funcionalidade não está implementada ainda",
-              description: "Mas não se preocupe! Você pode solicitar na sua próxima mensagem! 🚀",
-            })}
-            variant="outline"
-          >
-            Gerenciar Assinatura
-          </Button>
         </div>
       </motion.div>
     </div>

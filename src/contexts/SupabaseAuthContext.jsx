@@ -76,7 +76,12 @@ export function AuthProvider({ children }) {
     return data;
   };
 
-  const value = { user, loading, signInWithEmail, signUp, signOut, resetPassword };
+  const refreshUser = async () => {
+    const { data } = await supabase.auth.getUser();
+    if (data?.user) setUser(await enrichUser(data.user));
+  };
+
+  const value = { user, loading, signInWithEmail, signUp, signOut, resetPassword, refreshUser };
 
   return (
     <AuthContext.Provider value={value}>
