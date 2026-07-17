@@ -24,6 +24,6 @@ WHERE NOT EXISTS (SELECT 1 FROM auth.users u WHERE u.id = ec.user_id);
 DELETE FROM public.security_questions sq
 WHERE NOT EXISTS (SELECT 1 FROM auth.users u WHERE u.id = sq.user_id);
 
--- 6. Deleta emergency_access_log órfãos
-DELETE FROM public.emergency_access_log eal
-WHERE NOT EXISTS (SELECT 1 FROM auth.users u WHERE u.id = eal.user_id);
+-- 6. Deleta emergency_logs órfãos
+DELETE FROM public.emergency_logs el
+WHERE NOT EXISTS (SELECT 1 FROM auth.users u WHERE u.id = el.user_id);

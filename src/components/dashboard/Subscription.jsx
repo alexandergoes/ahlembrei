@@ -29,38 +29,27 @@ const Subscription = () => {
   }, []);
 
   const plans = {
-    free: {
-      name: 'Free',
-      price: { monthly: 0, yearly: 0 },
-      features: [
-        { text: 'Até 2 contatos', included: true },
-        { text: 'QR Code simples', included: true },
-        { text: 'Sem upload de documentos', included: false },
-        { text: 'Sem dados médicos', included: false },
-        { text: 'Suporte padrão', included: true },
-      ],
-    },
     basic: {
       name: 'Básico',
-      price: { monthly: 3.99, yearly: 39 },
+      price: { monthly: 4.99, yearly: 44.90 },
       features: [
-        { text: 'Até 5 contatos', included: true },
+        { text: 'Até 5 contatos de emergência', included: true },
         { text: 'QR Code personalizado', included: true },
-        { text: 'Upload de documentos digitais', included: true },
-        { text: 'Dados médicos', included: true },
-        { text: 'Suporte padrão', included: true },
+        { text: 'Upload de documentos (RG, CNH, Convênio)', included: true },
+        { text: 'Dados médicos completos', included: true },
+        { text: 'Endereço com busca ViaCEP', included: true },
+        { text: 'Notificação WhatsApp para contatos', included: true },
       ],
     },
     premium: {
       name: 'Premium',
-      price: { monthly: 9.9, yearly: 99 },
+      price: { monthly: 9.9, yearly: 89.90 },
       features: [
-        { text: 'Contatos ilimitados', included: true },
+        { text: 'Contatos de emergência ilimitados', included: true },
         { text: 'QR Code personalizado', included: true },
-        { text: 'Upload de documentos digitais', included: true },
-        { text: 'Dados médicos', included: true },
+        { text: 'Upload de documentos ilimitado', included: true },
+        { text: 'Dados médicos completos', included: true },
         { text: 'Suporte prioritário', included: true },
-        { text: 'Página multilíngue (PT-BR/EN)', included: true },
       ],
     },
   };
@@ -144,7 +133,7 @@ const Subscription = () => {
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-end">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-end">
         {Object.values(plans).map((plan, index) => {
           const isCurrentPlan = plan.name.toLowerCase() === user.plan;
           return (
@@ -162,7 +151,7 @@ const Subscription = () => {
                   {plan.name}
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  {plan.name === 'Free' ? 'Para começar' : plan.name === 'Básico' ? 'O mais popular' : 'Para máxima segurança'}
+                  {plan.name === 'Básico' ? 'O mais popular' : 'Para máxima segurança'}
                 </p>
                 <div className="mb-6">
                   <span className="text-5xl font-bold text-gray-900">
@@ -191,7 +180,7 @@ const Subscription = () => {
 
               <Button
                 onClick={() => handleChoosePlan(plan.name)}
-                disabled={isCurrentPlan || plan.name === 'Free'}
+                disabled={isCurrentPlan}
                 className={`w-full py-3 ${
                   isCurrentPlan
                     ? 'bg-gray-200 text-gray-500'
@@ -200,7 +189,7 @@ const Subscription = () => {
                       : 'bg-blue-600 text-white hover:bg-blue-700'
                 }`}
               >
-                {plan.name === 'Free' ? 'Grátis' : isCurrentPlan ? 'Plano Atual' : `Escolher ${plan.name}`}
+                {isCurrentPlan ? 'Plano Atual' : `Escolher ${plan.name}`}
               </Button>
             </motion.div>
           );

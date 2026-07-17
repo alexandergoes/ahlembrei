@@ -3,7 +3,9 @@ import { createServer } from 'http';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import crypto from 'crypto';
 import { MercadoPagoConfig, PreApproval } from 'mercadopago';
+import { createClient } from '@supabase/supabase-js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -16,17 +18,52 @@ const mpClient = new MercadoPagoConfig({
 });
 const preApproval = new PreApproval(mpClient);
 
-app.use(express.json());
+const supabase = createClient(
+  process.env.VITE_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY,
+);
+
+app.use(express.json({ verify: (req, _res, buf) => { req.rawBody = buf.toString(); } }));
 
 app.post('/api/webhook/mercadopago', async (req, res) => {
-  res.sendStatus(200);
+  try {
+    const xSignature = req.headers['x-signature'];
+    const xRequestId = req.headers['x-request-id'];
+
+    if (xSignature && xRequestId) {
+      const parts = xSignature.split(',');
+      const ts = parts.find(p => p.trim().startsWith('ts='))?.split('=')[1];
+      const hash = parts.find(p => p.trim().startsWith('v1='))?.split('=')[1];
+      const clientSecret = process.env.MERCADO_PAGO_CLIENT_SECRET;
+      if (ts && hash && clientSecret) {
+        const manifest = `id:${req.body?.data?.id};request-id:${xRequestId};ts:${ts};`;
+        const expected = crypto.createHmac('sha256', clientSecret).update(manifest).digest('hex');
+        if (hash !== expected) return res.sendStatus(401);
+      }
+    }
+
+    const { action, data } = req.body;
+    if (['subscription_created', 'subscription_updated', 'subscription_cancelled'].includes(action) && data?.id) {
+      const sub = await preApproval.get({ id: data.id });
+      const extRef = sub?.external_reference;
+      if (extRef) {
+        const [userId, plan] = extRef.split('-');
+        await supabase.rpc('admin_update_plan', { user_id: userId, new_plan: plan });
+      }
+    }
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.error('Webhook error:', err);
+    res.sendStatus(200);
+  }
 });
 
 app.post('/api/create-subscription', async (req, res) => {
   const { plan, billing, userId, userEmail } = req.body;
   const plans = {
-    basic: { monthly: 3.99, yearly: 39 },
-    premium: { monthly: 9.9, yearly: 99 },
+    basic: { monthly: 4.99, yearly: 44.90 },
+    premium: { monthly: 9.9, yearly: 89.90 },
   };
   const amount = plans[plan]?.[billing];
   if (!amount) return res.status(400).json({ error: 'Invalid plan' });
