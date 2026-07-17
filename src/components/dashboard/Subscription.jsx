@@ -65,10 +65,17 @@ const Subscription = () => {
 
     const planKey = planName.toLowerCase() === 'básico' ? 'basic' : 'premium';
 
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const edgeUrl = `${supabaseUrl}/functions/v1/smooth-api`;
+
     try {
-      const res = await fetch('/api/create-subscription', {
+      const res = await fetch(edgeUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${anonKey}`,
+        },
         body: JSON.stringify({
           plan: planKey,
           billing: billingCycle,
