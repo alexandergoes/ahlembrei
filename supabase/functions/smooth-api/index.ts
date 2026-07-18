@@ -41,16 +41,17 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        payer_email: userEmail,
         reason: `AhLembrei ${plan === "basic" ? "B\u00e1sico" : "Premium"} - ${billing === "monthly" ? "Mensal" : "Anual"}`,
         external_reference: `${userId}-${plan}`,
+        payer_email: userEmail,
         auto_recurring: {
           frequency: 1,
           frequency_type: billing === "monthly" ? "months" : "years",
           transaction_amount: amount,
           currency_id: "BRL",
         },
-        back_url: `${SITE_URL}/dashboard`,
+        back_url: `${SITE_URL}/dashboard?payment=success&plan=${plan}`,
+        status: "pending",
         notification_url: WEBHOOK_URL,
       }),
     })
