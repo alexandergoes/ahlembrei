@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
 
 const MP_ACCESS_TOKEN = Deno.env.get("MERCADO_PAGO_ACCESS_TOKEN") ?? ""
 const SITE_URL = Deno.env.get("SITE_URL") ?? "https://ahlembrei.com.br"
+const WEBHOOK_URL = Deno.env.get("WEBHOOK_URL") ?? "https://ereamhbtvyhvpoerrtdz.supabase.co/functions/v1/webhook-mercadopago"
 
 const PLANS: Record<string, Record<string, number>> = {
   basic: { monthly: 4.99, yearly: 44.90 },
@@ -50,6 +51,7 @@ serve(async (req) => {
           currency_id: "BRL",
         },
         back_url: `${SITE_URL}/dashboard`,
+        notification_url: WEBHOOK_URL,
       }),
     })
 

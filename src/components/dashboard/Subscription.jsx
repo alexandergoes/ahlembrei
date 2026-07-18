@@ -218,6 +218,36 @@ const Subscription = () => {
           </div>
         </div>
       </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="bg-gray-50 rounded-2xl p-4 shadow-sm border border-gray-200"
+      >
+        <p className="text-sm text-gray-500 mb-3">Ativação manual (se o Mercado Pago falhar)</p>
+        <div className="flex gap-3">
+          <Button
+            onClick={async () => {
+              const { error } = await supabase.rpc('update_my_plan', { new_plan: 'basic' })
+              if (error) toast({ title: 'Erro', description: error.message })
+              else { toast({ title: 'Plano básico ativado!' }); refreshUser() }
+            }}
+            className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg text-sm"
+          >
+            Ativar Básico
+          </Button>
+          <Button
+            onClick={async () => {
+              const { error } = await supabase.rpc('update_my_plan', { new_plan: 'premium' })
+              if (error) toast({ title: 'Erro', description: error.message })
+              else { toast({ title: 'Plano premium ativado!' }); refreshUser() }
+            }}
+            className="bg-yellow-600 text-white hover:bg-yellow-700 px-4 py-2 rounded-lg text-sm"
+          >
+            Ativar Premium
+          </Button>
+        </div>
+      </motion.div>
     </div>
   );
 };
