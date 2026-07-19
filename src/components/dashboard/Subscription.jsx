@@ -13,9 +13,13 @@ const Subscription = () => {
   const [billingCycle, setBillingCycle] = useState('monthly');
 
   useEffect(() => {
+    let plan = searchParams.get('plan');
     const payment = searchParams.get('payment');
-    const plan = searchParams.get('plan');
-    if (payment === 'success' && plan) {
+    const extRef = searchParams.get('external_reference');
+    const status = searchParams.get('collection_status');
+
+    if (!plan && extRef) plan = extRef.split('-')[1];
+    if ((payment === 'success' || status === 'approved') && plan) {
       supabase.rpc('update_my_plan', { new_plan: plan }).then(({ error }) => {
         if (error) {
           toast({ title: 'Erro ao ativar plano', description: error.message });
@@ -29,44 +33,36 @@ const Subscription = () => {
   }, []);
 
   const plans = {
-    free: {
-      name: 'Free',
-      price: { monthly: 0, yearly: 0 },
-      features: [
-        { text: 'Até 2 contatos', included: true },
-        { text: 'QR Code simples', included: true },
-        { text: 'Sem upload de documentos', included: false },
-        { text: 'Sem dados médicos', included: false },
-        { text: 'Suporte padrão', included: true },
-      ],
-    },
     basic: {
       name: 'Básico',
-      price: { monthly: 4.99, yearly: 49 },
+      price: { monthly: 4.99, yearly: 44.90 },
       features: [
-        { text: 'Até 5 contatos', included: true },
+        { text: 'Até 5 contatos de emergência', included: true },
         { text: 'QR Code personalizado', included: true },
-        { text: 'Upload de documentos digitais', included: true },
-        { text: 'Dados médicos', included: true },
-        { text: 'Suporte padrão', included: true },
+        { text: 'Upload de documentos (RG, CNH, Convênio)', included: true },
+        { text: 'Dados médicos completos', included: true },
+        { text: 'Endereço com busca ViaCEP', included: true },
+        { text: 'Notificação WhatsApp para contatos', included: true },
       ],
     },
     premium: {
       name: 'Premium',
-      price: { monthly: 9.9, yearly: 99 },
+      price: { monthly: 9.9, yearly: 89.90 },
       features: [
-        { text: 'Contatos ilimitados', included: true },
+        { text: 'Contatos de emergência ilimitados', included: true },
         { text: 'QR Code personalizado', included: true },
-        { text: 'Upload de documentos digitais', included: true },
-        { text: 'Dados médicos', included: true },
+        { text: 'Upload de documentos ilimitado', included: true },
+        { text: 'Dados médicos completos', included: true },
         { text: 'Suporte prioritário', included: true },
-        { text: 'Página multilíngue (PT-BR/EN)', included: true },
       ],
     },
   };
 
+  const planKeys = { básico: 'basic', premium: 'premium' };
+
   const handleChoosePlan = async (planName) => {
-    if (planName.toLowerCase() === user.plan) {
+    const planKey = planKeys[planName.toLowerCase()];
+    if (planKey === user.plan) {
       toast({
         title: 'Este é o seu plano atual',
         description: 'Você já está inscrito neste plano.',
@@ -74,7 +70,7 @@ const Subscription = () => {
       return;
     }
 
-    const planKey = planName.toLowerCase() === 'básico' ? 'basic' : 'premium';
+
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
     const edgeUrl = `${supabaseUrl}/functions/v1/smooth-api`;
@@ -150,9 +146,9 @@ const Subscription = () => {
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-end">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-end">
         {Object.values(plans).map((plan, index) => {
-          const isCurrentPlan = plan.name.toLowerCase() === user.plan;
+          const isCurrentPlan = planKeys[plan.name.toLowerCase()] === user.plan;
           return (
             <motion.div
               key={plan.name}
@@ -168,7 +164,7 @@ const Subscription = () => {
                   {plan.name}
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  {plan.name === 'Free' ? 'Para começar' : plan.name === 'Básico' ? 'O mais popular' : 'Para máxima segurança'}
+                  {plan.name === 'Básico' ? 'O mais popular' : 'Para máxima segurança'}
                 </p>
                 <div className="mb-6">
                   <span className="text-5xl font-bold text-gray-900">
@@ -223,8 +219,38 @@ const Subscription = () => {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-gray-600">Seu plano atual é</p>
-            <p className="text-2xl font-bold text-blue-600 capitalize">{user.plan}</p>
+            <p className="text-2xl font-bold text-blue-600 capitalize">{user.plan === 'free' ? 'Grátis' : user.plan}</p>
           </div>
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="bg-gray-50 rounded-2xl p-4 shadow-sm border border-gray-200"
+      >
+        <p className="text-sm text-gray-500 mb-3">Ativação manual (se o Mercado Pago falhar)</p>
+        <div className="flex gap-3">
+          <Button
+            onClick={async () => {
+              const { error } = await supabase.rpc('update_my_plan', { new_plan: 'basic' })
+              if (error) toast({ title: 'Erro', description: error.message })
+              else { toast({ title: 'Plano básico ativado!' }); refreshUser() }
+            }}
+            className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg text-sm"
+          >
+            Ativar Básico
+          </Button>
+          <Button
+            onClick={async () => {
+              const { error } = await supabase.rpc('update_my_plan', { new_plan: 'premium' })
+              if (error) toast({ title: 'Erro', description: error.message })
+              else { toast({ title: 'Plano premium ativado!' }); refreshUser() }
+            }}
+            className="bg-yellow-600 text-white hover:bg-yellow-700 px-4 py-2 rounded-lg text-sm"
+          >
+            Ativar Premium
+          </Button>
         </div>
       </motion.div>
     </div>

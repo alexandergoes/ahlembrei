@@ -25,6 +25,8 @@ const EmergencyContacts = () => {
   useEffect(() => {
     if (user?.id) {
       loadContacts();
+    } else if (!user) {
+      setLoading(false);
     }
   }, [user]);
 

@@ -254,27 +254,13 @@ const RegisterPage = () => {
               />
               <span className="ml-2 text-sm text-gray-600">
                 Concordo com os{' '}
-                <button
-                  type="button"
-                  onClick={() => toast({
-                    title: "🚧 Esta funcionalidade não está implementada ainda",
-                    description: "Mas não se preocupe! Você pode solicitar na sua próxima mensagem! 🚀",
-                  })}
-                  className="text-blue-600 hover:text-blue-500"
-                >
+                <Link to="/terms" target="_blank" className="text-blue-600 hover:text-blue-500 underline">
                   Termos de Uso
-                </button>
+                </Link>
                 {' '}e{' '}
-                <button
-                  type="button"
-                  onClick={() => toast({
-                    title: "🚧 Esta funcionalidade não está implementada ainda",
-                    description: "Mas não se preocupe! Você pode solicitar na sua próxima mensagem! 🚀",
-                  })}
-                  className="text-blue-600 hover:text-blue-500"
-                >
+                <Link to="/privacy" target="_blank" className="text-blue-600 hover:text-blue-500 underline">
                   Política de Privacidade
-                </button>
+                </Link>
               </span>
             </div>
 

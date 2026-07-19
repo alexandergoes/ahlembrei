@@ -70,12 +70,17 @@ const EmergencyPage = () => {
       ? `\n\nLocalização: https://www.google.com/maps?q=${helperLocation}`
       : '';
     const message = `Olá! ${name} está prestando socorro a ${profile?.full_name || 'um usuário'} do AhLembrei.${location}\n\nTelefone do socorrista: ${phone}\n\nEntre em contato o mais rápido possível.`;
-    handleWhatsApp(contact.whatsapp, message);
+    const whatsNumber = contact.whatsapp || contact.phone;
+    if (whatsNumber) handleWhatsApp(whatsNumber, message);
+  };
+
+  const getContactNumber = (contact) => {
+    return contact.whatsapp || contact.phone;
   };
 
   const handleNotifyFamily = async () => {
     const primaryContact = contacts.find(c => c.is_primary) || contacts[0];
-    const number = primaryContact?.whatsapp || primaryContact?.phone;
+    const number = getContactNumber(primaryContact);
     if (!number) return;
 
     try {
@@ -180,18 +185,18 @@ const EmergencyPage = () => {
           )}
         </motion.div>
 
-        {(profile.address_street || profile.address_city) && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white rounded-2xl p-6 shadow-lg mb-6"
-          >
-            <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-              <MapPin className="w-5 h-5 mr-2 text-red-600" />
-              Localização de Referência
-            </h2>
-            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white rounded-2xl p-6 shadow-lg mb-6"
+        >
+          <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
+            <MapPin className="w-5 h-5 mr-2 text-red-600" />
+            Localização
+          </h2>
+          {(profile.address_street || profile.address_city) && (
+            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200 mb-3">
               <p className="text-blue-900 font-medium">📍 Endereço do perfil:</p>
               <p className="text-blue-800 mt-1">
                 {profile.address_street && `${profile.address_street}${profile.address_number ? `, ${profile.address_number}` : ''}`}
@@ -201,23 +206,20 @@ const EmergencyPage = () => {
                 {profile.address_zipcode && <><br />CEP: {profile.address_zipcode}</>}
               </p>
             </div>
-          </motion.div>
-        )}
-
-        {!profile.address_street && !profile.address_city && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white rounded-2xl p-6 shadow-lg mb-6"
-          >
-            <h2 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-              <MapPin className="w-5 h-5 mr-2 text-gray-400" />
-              Localização de Referência
-            </h2>
+          )}
+          {helperLocation && (
+            <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+              <p className="text-green-900 font-medium">📍 Localização atual do socorrista:</p>
+              <a href={`https://www.google.com/maps?q=${helperLocation}`} target="_blank" rel="noopener noreferrer"
+                className="text-green-700 underline text-sm mt-1 block">
+                Ver no Google Maps
+              </a>
+            </div>
+          )}
+          {!profile.address_street && !profile.address_city && !helperLocation && (
             <p className="text-gray-500 text-sm">Localização não informada pelo usuário.</p>
-          </motion.div>
-        )}
+          )}
+        </motion.div>
 
         {profile.health_plan_company && (
           <motion.div
@@ -268,14 +270,14 @@ const EmergencyPage = () => {
                   onChange={(e) => setHelperPhone(e.target.value)}
                   className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" />
               </div>
-              {phoneRevealed && contacts.filter(c => c.whatsapp).map((contact) => (
+              {phoneRevealed && contacts.filter(c => c.whatsapp || c.phone).map((contact) => (
                 <Button key={contact.id} onClick={() => handleHelperWhatsApp(contact)}
                   className="w-full bg-green-600 hover:bg-green-700 text-white flex items-center justify-center py-3">
                   <MessageCircle className="w-5 h-5 mr-2" />
                   Enviar aviso para {contact.name} (WhatsApp)
                 </Button>
               ))}
-              {!phoneRevealed && contacts.filter(c => c.whatsapp).length > 0 && (
+              {!phoneRevealed && contacts.filter(c => c.whatsapp || c.phone).length > 0 && (
                 <p className="text-sm text-gray-400 text-center">Notifique a família acima para liberar os contatos.</p>
               )}
               {helperLocation && (
@@ -319,10 +321,10 @@ const EmergencyPage = () => {
                       <Button onClick={() => handleCall(contact.phone)} className="bg-red-600 hover:bg-red-700 text-white flex items-center justify-center py-3">
                         <Phone className="w-5 h-5 mr-2" /> Ligar
                       </Button>
-                      {contact.whatsapp && (
+                      {(contact.whatsapp || contact.phone) && (
                         <Button onClick={() => {
                           const msg = `Estou acessando a página de emergência de ${profile?.full_name || 'um usuário'} do AhLembrei.${helperLocation ? `\n\nLocalização: https://www.google.com/maps?q=${helperLocation}` : ''}`;
-                          handleWhatsApp(contact.whatsapp, msg);
+                          handleWhatsApp(contact.whatsapp || contact.phone, msg);
                         }} className="bg-green-600 hover:bg-green-700 text-white flex items-center justify-center py-3">
                           <MessageCircle className="w-5 h-5 mr-2" /> WhatsApp
                         </Button>

@@ -19,10 +19,23 @@ const LandingPage = () => {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
 
-  const handleEmergencyAccess = (e) => {
+  const handleEmergencyAccess = async (e) => {
     e.preventDefault();
     const code = emergencyCode.trim();
-    if (code) navigate(`/emergency/${code}`);
+    if (!code) return;
+    const uuidMatch = code.match(
+      /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+    );
+    if (uuidMatch) {
+      navigate(`/emergency/${uuidMatch[0]}`);
+      return;
+    }
+    const user = await searchByHandle(code);
+    if (user) {
+      navigate(`/emergency/${user.id}`);
+    } else {
+      navigate(`/emergency/${code}`);
+    }
   };
 
   const showMsg = (text, type = 'error') => {
@@ -463,6 +476,9 @@ const LandingPage = () => {
           </p>
           <p className="text-gray-500 text-sm">
             &copy; {new Date().getFullYear()} AhLembrei. Todos os direitos reservados.
+          </p>
+          <p className="text-gray-600 text-xs mt-2">
+            v1.0.0
           </p>
         </div>
       </footer>

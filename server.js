@@ -1,6 +1,5 @@
 import express from 'express';
 import { createServer } from 'http';
-import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { MercadoPagoConfig, PreApproval } from 'mercadopago';
@@ -61,7 +60,7 @@ app.post('/api/create-subscription', async (req, res) => {
 
 app.use(express.static(join(__dirname, 'dist')));
 
-app.get('*', (req, res) => {
+app.get('/{*splat}', (req, res) => {
   res.sendFile(join(__dirname, 'dist', 'index.html'));
 });
 

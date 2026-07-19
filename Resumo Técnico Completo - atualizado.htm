@@ -1,0 +1,1550 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=Generator content="Microsoft Word 15 (filtered)">
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Aptos;}
+@font-face
+	{font-family:"Segoe UI Emoji";
+	panose-1:2 11 5 2 4 2 4 2 2 3;}
+@font-face
+	{font-family:"Segoe UI Symbol";
+	panose-1:2 11 5 2 4 2 4 2 2 3;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:8.0pt;
+	margin-left:0cm;
+	line-height:115%;
+	font-size:12.0pt;
+	font-family:"Aptos",sans-serif;}
+a:link, span.MsoHyperlink
+	{color:#467886;
+	text-decoration:underline;}
+.MsoChpDefault
+	{font-size:12.0pt;}
+.MsoPapDefault
+	{margin-bottom:8.0pt;
+	line-height:115%;}
+@page WordSection1
+	{size:595.3pt 841.9pt;
+	margin:70.85pt 3.0cm 70.85pt 3.0cm;}
+div.WordSection1
+	{page:WordSection1;}
+ /* List Definitions */
+ ol
+	{margin-bottom:0cm;}
+ul
+	{margin-bottom:0cm;}
+-->
+</style>
+
+</head>
+
+<body lang=PT-BR link="#467886" vlink="#96607D" style='word-wrap:break-word'>
+
+<div class=WordSection1>
+
+<p class=MsoNormal>Vou gerar um documento técnico completo. Preciso primeiro
+coletar informações de todos os módulos.</p>
+
+<p class=MsoNormal><a
+href="oc://renderer/server/c2lkZWNhcg/session/ses_094d4e440ffehY1PLkomD25qSI"></a></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Aqui está o documento técnico completo para sua outra IA:</p>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=0 width="100%" align=center>
+
+</div>
+
+<p class=MsoNormal><b>AhLembrei — Documento Técnico Completo</b></p>
+
+<p class=MsoNormal><b>1. Visão Geral</b></p>
+
+<p class=MsoNormal>AhLembrei&nbsp;é uma plataforma web de segurança e
+emergência médica. Permite que usuários cadastrem contatos de emergência, dados
+médicos e documentos, acessíveis publicamente via QR Code, link direto ou busca
+por apelido — mesmo sem o celular da pessoa.</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>Domínio:&nbsp;<a href="https://ahlembrei.com.br/"
+     target="_blank">https://ahlembrei.com.br</a></li>
+ <li class=MsoNormal>Stack: React 18 + Vite 7 + Tailwind CSS 3 + Express 5 +
+     Supabase (PostgreSQL + Auth + Storage)</li>
+ <li class=MsoNormal>Hospedagem: Hostinger (Node.js Web App, conectado via
+     GitHub)</li>
+ <li class=MsoNormal>Versão atual: 1.0.0</li>
+</ul>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=0 width="100%" align=center>
+
+</div>
+
+<p class=MsoNormal><b>2. Arquitetura</b></p>
+
+<p class=MsoNormal>2.1 Frontend (SPA — React + Vite)</p>
+
+<p class=MsoNormal>Framework: React 18 com Vite 7 como
+bundler.&nbsp;Roteamento:&nbsp;react-router-dom&nbsp;v6
+(client-side).&nbsp;Estado global: Context API
+(SupabaseAuthContext).&nbsp;Estilização: Tailwind CSS 3
++&nbsp;tailwindcss-animate&nbsp;+&nbsp;framer-motion&nbsp;(animações).&nbsp;UI
+Components: Radix UI primitives (Dialog, Toast, DropdownMenu, Tabs etc) +
+Lucide React (ícones).</p>
+
+<p class=MsoNormal>Entry point:&nbsp;src/main.jsx&nbsp;&#8594;
+renderiza&nbsp;&lt;App /&gt;&nbsp;com StrictMode.</p>
+
+<p class=MsoNormal>Componente raiz&nbsp;—&nbsp;src/App.jsx:</p>
+
+<p class=MsoNormal>&lt;HelmetProvider&gt;</p>
+
+<p class=MsoNormal>  &lt;AuthProvider&gt;</p>
+
+<p class=MsoNormal>    &lt;BrowserRouter&gt;</p>
+
+<p class=MsoNormal>      &lt;Toaster /&gt;</p>
+
+<p class=MsoNormal>      &lt;Routes&gt;</p>
+
+<p class=MsoNormal>        &lt;Route path=&quot;/&quot;
+element={&lt;LandingPage /&gt;} /&gt;</p>
+
+<p class=MsoNormal>        &lt;Route path=&quot;/login&quot;
+element={&lt;LoginPage /&gt;} /&gt;</p>
+
+<p class=MsoNormal>        &lt;Route path=&quot;/register&quot;
+element={&lt;RegisterPage /&gt;} /&gt;</p>
+
+<p class=MsoNormal>        &lt;Route path=&quot;/dashboard/*&quot;
+element={&lt;Dashboard /&gt;} /&gt;</p>
+
+<p class=MsoNormal>        &lt;Route path=&quot;/emergency/:userId&quot;
+element={&lt;EmergencyPage /&gt;} /&gt;</p>
+
+<p class=MsoNormal>        &lt;Route path=&quot;/admin&quot;
+element={&lt;AdminPage /&gt;} /&gt;</p>
+
+<p class=MsoNormal>        &lt;Route path=&quot;/reset-password&quot;
+element={&lt;ResetPassword /&gt;} /&gt;</p>
+
+<p class=MsoNormal>        &lt;Route path=&quot;/terms&quot;
+element={&lt;TermsPage /&gt;} /&gt;</p>
+
+<p class=MsoNormal>        &lt;Route path=&quot;/privacy&quot; element={&lt;PrivacyPage
+/&gt;} /&gt;</p>
+
+<p class=MsoNormal>      &lt;/Routes&gt;</p>
+
+<p class=MsoNormal>    &lt;/BrowserRouter&gt;</p>
+
+<p class=MsoNormal>  &lt;/AuthProvider&gt;</p>
+
+<p class=MsoNormal>&lt;/HelmetProvider&gt;</p>
+
+<p class=MsoNormal>Alias Vite:&nbsp;@&nbsp;&#8594;&nbsp;./src.</p>
+
+<p class=MsoNormal>2.2 Backend (Express 5)</p>
+
+<p class=MsoNormal>Arquivo:&nbsp;server.js</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>Servidor HTTP Node.js puro (Express 5)</li>
+ <li class=MsoNormal>Porta: 3000 (definida via&nbsp;PORT&nbsp;env)</li>
+ <li class=MsoNormal>Sirve o build estático (dist/) e faz fallback SPA
+     (qualquer rota &#8594;&nbsp;index.html)</li>
+ <li class=MsoNormal>Endpoints REST:</li>
+</ul>
+
+<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 width=656
+ style='width:492.0pt;border-collapse:collapse;border:none'>
+ <thead>
+  <tr>
+   <td valign=top style='border:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Método</p>
+   </td>
+   <td valign=top style='border:solid windowtext 1.0pt;border-left:none;
+   padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Rota</p>
+   </td>
+   <td valign=top style='border:solid windowtext 1.0pt;border-left:none;
+   padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Descrição</p>
+   </td>
+  </tr>
+ </thead>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>POST</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>/api/create-subscription</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Cria assinatura Mercado Pago (PreApproval)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>POST</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>/api/webhook/mercadopago</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Webhook de notificação MP (retorna 200 OK)</p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal>2.3 Banco de Dados (Supabase PostgreSQL)</p>
+
+<p class=MsoNormal>Plano: Supabase — PostgreSQL gerenciado com Auth e Storage
+integrados.</p>
+
+<p class=MsoNormal>Tabelas:</p>
+
+<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 width=656
+ style='width:492.0pt;border-collapse:collapse;border:none'>
+ <thead>
+  <tr>
+   <td valign=top style='border:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Tabela</p>
+   </td>
+   <td valign=top style='border:solid windowtext 1.0pt;border-left:none;
+   padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Descrição</p>
+   </td>
+   <td valign=top style='border:solid windowtext 1.0pt;border-left:none;
+   padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Campos principais</p>
+   </td>
+  </tr>
+ </thead>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>profiles</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Perfil do usuário (1:1 com auth.users)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>id (UUID PK, FK auth.users), full_name, handle, phone,
+  photo_url, birth_date, address_*, health_plan_*, emergency_message,
+  settings_*, plan_type, role, active</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>emergency_contacts</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Contatos de emergência</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>id (UUID PK), user_id (FK profiles), name, phone,
+  whatsapp, email, relationship, is_primary</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>medical_records</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Informações médicas</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>id (UUID PK), user_id (FK profiles), blood_type,
+  allergies, conditions, medications, observations</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>user_documents</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Documentos upados</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>id (UUID PK), user_id (FK profiles), name, type,
+  storage_path, file_size</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>security_questions</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Perguntas de segurança (MFA)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>id (UUID PK), user_id (FK profiles), question_text,
+  answer_hash</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>emergency_logs</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Log de acessos à emergência</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>id (UUID PK), user_id (FK profiles), ip_address,
+  user_agent, access_method, status, attempt_count, created_at</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>admin_audit_log</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Log de ações admin</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>id (UUID PK), admin_id (FK profiles), action,
+  target_user_id, details, created_at</p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal>2.4 Auth (Supabase Auth)</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>Provedor: Supabase Auth (email/senha + Google OAuth)</li>
+ <li class=MsoNormal>Trigger&nbsp;handle_new_user(): cria perfil na
+     tabela&nbsp;profiles&nbsp;automaticamente
+     no&nbsp;INSERT&nbsp;em&nbsp;auth.users</li>
+ <li class=MsoNormal>Trigger&nbsp;update_updated_at():
+     atualiza&nbsp;updated_at&nbsp;automaticamente</li>
+</ul>
+
+<p class=MsoNormal>Context:&nbsp;SupabaseAuthContext.jsx&nbsp;— gerencia
+sessão,&nbsp;signUp,&nbsp;signInWithEmail,&nbsp;signOut,&nbsp;resetPassword,&nbsp;refreshUser.</p>
+
+<p class=MsoNormal>Enriquecimento do usuário: ao carregar,
+busca&nbsp;plan_type&nbsp;e&nbsp;role&nbsp;da tabela&nbsp;profiles&nbsp;e anexa
+ao objeto de sessão.</p>
+
+<p class=MsoNormal>2.5 Storage (Supabase Storage)</p>
+
+<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 width=656
+ style='width:492.0pt;border-collapse:collapse;border:none'>
+ <thead>
+  <tr>
+   <td valign=top style='border:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Bucket</p>
+   </td>
+   <td valign=top style='border:solid windowtext 1.0pt;border-left:none;
+   padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Público</p>
+   </td>
+   <td valign=top style='border:solid windowtext 1.0pt;border-left:none;
+   padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Uso</p>
+   </td>
+  </tr>
+ </thead>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>documents</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Não</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Documentos upados (RG, CNH, Convênio)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>avatars</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Sim</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Fotos de perfil</p>
+  </td>
+ </tr>
+</table>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=0 width="100%" align=center>
+
+</div>
+
+<p class=MsoNormal><b>3. Módulos / Páginas</b></p>
+
+<p class=MsoNormal>3.1 LandingPage (/)</p>
+
+<p class=MsoNormal>Funcionalidades:</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>Busca por código de emergência&nbsp;(QR Code/URL): extrai
+     UUID da URL, ou busca por apelido via RPC&nbsp;search_by_handle, ou navega
+     direto</li>
+ <li class=MsoNormal>Busca por apelido: campo&nbsp;@apelido, chama
+     RPC&nbsp;search_by_handle, exibe modal de confirmação</li>
+ <li class=MsoNormal>Fluxo &quot;Consciente&quot;: carrega 2 perguntas de
+     segurança aleatórias (get_random_questions), usuário responde, verifica
+     via RPC&nbsp;verify_security_answer&nbsp;(3 tentativas máx), se passar
+     &#8594; navega para&nbsp;/emergency/{id}?mode=conscious</li>
+ <li class=MsoNormal>Fluxo &quot;Inconsciente&quot;: notifica WhatsApp do
+     contato primário &#8594; navega para&nbsp;/emergency/{id}?mode=unconscious</li>
+ <li class=MsoNormal>WhatsApp notification: envia mensagem com localização
+     geográfica do socorrista</li>
+ <li class=MsoNormal>Footer: &quot;v1.0.0&quot;, copyright, links para Termos e
+     Privacidade</li>
+</ul>
+
+<p class=MsoNormal>3.2 EmergencyPage (/emergency/:userId)</p>
+
+<p class=MsoNormal>Página pública (sem autenticação). Carrega dados
+via&nbsp;fetchEmergencyProfile&nbsp;+&nbsp;fetchEmergencyContacts&nbsp;+&nbsp;fetchMedicalRecords.</p>
+
+<p class=MsoNormal>Seções:</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>Perfil: foto (se houver), nome, idade (calculada
+     do&nbsp;birth_date)</li>
+ <li class=MsoNormal>Endereço: rua, número, bairro, cidade, estado</li>
+ <li class=MsoNormal>Convênio: empresa, tipo, número da carteira, telefone</li>
+ <li class=MsoNormal>Contatos de Emergência: nome, relação, email — telefones
+     ocultos <span style='font-family:"Segoe UI Emoji",sans-serif'>&#128274;</span>
+     até clicar &quot;Notificar Família Agora&quot; (envia WhatsApp + revela
+     telefones)</li>
+ <li class=MsoNormal>Informações Médicas: tipo sanguíneo, alergias, condições,
+     medicações, observações (só aparece se&nbsp;settings_show_medical = true)</li>
+ <li class=MsoNormal>Helper form: nome + telefone do socorrista (opcional)</li>
+ <li class=MsoNormal>Notificar Família: envia WhatsApp com localização Google
+     Maps aos contatos primários</li>
+</ul>
+
+<p class=MsoNormal>3.3 Dashboard (/dashboard/*)</p>
+
+<p class=MsoNormal>Layout com&nbsp;Sidebar&nbsp;(esquerda)
++&nbsp;Header&nbsp;(superior) + conteúdo tabulado.</p>
+
+<p class=MsoNormal>Tabs:</p>
+
+<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 width=656
+ style='width:492.0pt;border-collapse:collapse;border:none'>
+ <thead>
+  <tr>
+   <td valign=top style='border:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Tab</p>
+   </td>
+   <td valign=top style='border:solid windowtext 1.0pt;border-left:none;
+   padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Componente</p>
+   </td>
+   <td valign=top style='border:solid windowtext 1.0pt;border-left:none;
+   padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Descrição</p>
+   </td>
+  </tr>
+ </thead>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>overview</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Overview.jsx</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Visão geral + alerta de perfil incompleto + QR Code +
+  atalhos</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>my-data</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>MyData.jsx</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Formulário de dados pessoais (nome, apelido, telefone,
+  endereço com ViaCEP, convênio, mensagem de emergência, privacy toggles,
+  perguntas de segurança MFA, upload de foto via avatars bucket)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>contacts</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>EmergencyContacts.jsx</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>CRUD de contatos (nome, telefone, WhatsApp, email,
+  relação, primário), limite por plano (Free=2, Básico=5, Premium=&#8734;)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>medical</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>MedicalInfo.jsx</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Tipo sanguíneo (select), alergias/condições/medicações
+  (chips), premium-gated</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>documents</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Documents.jsx</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Upload de documentos (RG, CNH, Convênio) via Storage,
+  premium-gated</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>subscription</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Subscription.jsx</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Planos: Free (grátis), Básico (R$3,99/mês ou R$39/ano),
+  Premium (R$9,90/mês ou R$99/ano). Redireciona para Mercado Pago Checkout Pro.
+  Após pagamento, chama RPC&nbsp;update_my_plan</p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal>3.4 Auth Pages</p>
+
+<p class=MsoNormal>RegisterPage&nbsp;(/register):</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>Nome, email, senha (5 regras: 8+ chars, maiúscula,
+     minúscula, número, especial), confirmar senha</li>
+ <li class=MsoNormal>Google OAuth</li>
+ <li class=MsoNormal>Aceite de Termos e Privacidade (links
+     para&nbsp;/terms&nbsp;e&nbsp;/privacy)</li>
+</ul>
+
+<p class=MsoNormal>LoginPage&nbsp;(/login):</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>Email + senha, Google OAuth</li>
+ <li class=MsoNormal>&quot;Lembrar de mim&quot; (checkbox)</li>
+ <li class=MsoNormal>Esqueci senha</li>
+ <li class=MsoNormal>Suporte a redirect pós-login (?redirect=...)</li>
+</ul>
+
+<p class=MsoNormal>ResetPassword&nbsp;(/reset-password):</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>Formulário de redefinição de senha (email &#8594; link
+     mágico)</li>
+</ul>
+
+<p class=MsoNormal>3.5 Admin (/admin)</p>
+
+<p class=MsoNormal>Painel administrativo (AdminPage.jsx):</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>Tabela de usuários (sortable, filterable por
+     status/role/plan, searchável)</li>
+ <li class=MsoNormal>Modal de detalhes do usuário com abas: Profile, Contacts,
+     Medical, Documents, Audit</li>
+ <li class=MsoNormal>Ações: toggle active, promote/demote role (com proteção de
+     último admin)</li>
+ <li class=MsoNormal>Visualizador de logs: audit logs + emergency access logs</li>
+ <li class=MsoNormal>Confirmação por digitação (ex: digitar &quot;DELETAR&quot;
+     para confirmar)</li>
+</ul>
+
+<p class=MsoNormal>3.6 Legal Pages</p>
+
+<p class=MsoNormal>TermsPage&nbsp;(/terms): Termos de Uso e
+Serviço&nbsp;PrivacyPage&nbsp;(/privacy): Política de Privacidade</p>
+
+<p class=MsoNormal>Ambos criados como páginas React para review de advogado,
+com documentos&nbsp;.md&nbsp;em&nbsp;docs/.</p>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=0 width="100%" align=center>
+
+</div>
+
+<p class=MsoNormal><b>4. RPCs (Stored Procedures)</b></p>
+
+<p class=MsoNormal>Definidos nas migrations do Supabase:</p>
+
+<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 width=656
+ style='width:492.0pt;border-collapse:collapse;border:none'>
+ <thead>
+  <tr>
+   <td valign=top style='border:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Nome</p>
+   </td>
+   <td valign=top style='border:solid windowtext 1.0pt;border-left:none;
+   padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Parâmetros</p>
+   </td>
+   <td valign=top style='border:solid windowtext 1.0pt;border-left:none;
+   padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Descrição</p>
+   </td>
+  </tr>
+ </thead>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>search_by_handle(p_handle TEXT)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Handle</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Retorna id, full_name, photo_url do perfil com handle
+  match (LOWER)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>get_random_questions(p_user_id UUID, p_count INT)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>user_id, count</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Retorna perguntas de segurança aleatórias</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>verify_security_answer(p_question_id UUID, p_answer TEXT)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>question_id, answer</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Verifica resposta contra hash armazenado</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>log_security_failure(p_user_id UUID, p_attempts INT)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>user_id, attempts</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Loga falha de desafio de segurança</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>update_handle(p_user_id UUID, p_new_handle TEXT)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>user_id, new_handle</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Atualiza handle com verificação de unicidade</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>update_my_address(...)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Endereço completo</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Atualiza endereço do perfil atual</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>update_my_plan(new_plan TEXT)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>plan_type</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Altera plan_type do próprio perfil (pós-pagamento)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>admin_list_all_users()</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>—</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Lista todos os usuários (admin only)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>admin_list_users(...)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>filters</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Lista usuários com filtros/paginação (admin only)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>admin_toggle_user_active(target_user_id UUID)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>target_user_id</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Ativa/desativa usuário (admin only)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>admin_update_user_role(target_user_id UUID, new_role TEXT)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>target_user_id, new_role</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Altera role (admin only, proteção último admin)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>admin_delete_user(target_user_id UUID)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>target_user_id</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Deleta usuário (admin only)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>admin_get_user_audit(target_user_id UUID)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>target_user_id</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Logs de auditoria de um usuário (admin only)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>admin_list_audit_logs()</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>—</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Lista todos os audit logs (admin only)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>admin_list_emergency_logs()</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>—</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Lista todos os emergency logs (admin only)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>is_admin()</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>—</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Helper que checa se current user é admin</p>
+  </td>
+ </tr>
+</table>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=0 width="100%" align=center>
+
+</div>
+
+<p class=MsoNormal><b>5. RLS Policies (Row Level Security)</b></p>
+
+<p class=MsoNormal>profiles</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>&quot;Users can view own profile&quot; &#8594; auth.uid()
+     = id</li>
+ <li class=MsoNormal>&quot;Users can insert own profile&quot; &#8594;
+     auth.uid() = id</li>
+ <li class=MsoNormal>&quot;Users can update own profile&quot; &#8594;
+     auth.uid() = id</li>
+ <li class=MsoNormal>&quot;Anyone can view emergency profile&quot; &#8594;
+     USING (true)&nbsp;(chave para funcionamento público)</li>
+</ul>
+
+<p class=MsoNormal>emergency_contacts</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>&quot;Users can view own contacts&quot; &#8594; auth.uid()
+     = user_id</li>
+ <li class=MsoNormal>&quot;Users can insert own contacts&quot; &#8594;
+     auth.uid() = user_id</li>
+ <li class=MsoNormal>&quot;Users can update own contacts&quot; &#8594;
+     auth.uid() = user_id</li>
+ <li class=MsoNormal>&quot;Users can delete own contacts&quot; &#8594;
+     auth.uid() = user_id</li>
+ <li class=MsoNormal>&quot;Anyone can view emergency contacts&quot; &#8594;
+     USING (true)</li>
+</ul>
+
+<p class=MsoNormal>medical_records</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>&quot;Anyone can view medical records&quot; &#8594; USING
+     (true)</li>
+</ul>
+
+<p class=MsoNormal>user_documents</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>&quot;Anyone can view documents&quot; &#8594; USING (true)</li>
+</ul>
+
+<p class=MsoNormal>emergency_logs</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>&quot;Anyone can insert logs&quot; &#8594; USING (true)</li>
+ <li class=MsoNormal>&quot;Users can view own logs&quot; &#8594; auth.uid() =
+     user_id</li>
+ <li class=MsoNormal>&quot;Admin can view all logs&quot; &#8594; check admin
+     role</li>
+ <li class=MsoNormal>&quot;Admin read all logs&quot; &#8594; USING (is_admin())</li>
+</ul>
+
+<p class=MsoNormal>security_questions</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>Policies: user-scoped CRUD</li>
+</ul>
+
+<p class=MsoNormal>Storage buckets</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>documents: autenticado upload, owner delete</li>
+ <li class=MsoNormal>avatars: público read, autenticado upload (pasta por
+     user), owner delete</li>
+</ul>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=0 width="100%" align=center>
+
+</div>
+
+<p class=MsoNormal><b>6. Integrações</b></p>
+
+<p class=MsoNormal>6.1 Mercado Pago (Checkout Pro — Assinaturas)</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>SDK:&nbsp;mercadopago&nbsp;v3.2.0</li>
+ <li class=MsoNormal>Fluxo: Dashboard &#8594; Subscription &#8594; seleciona
+     plano &#8594; clica &quot;Assinar&quot; &#8594;
+     POST&nbsp;/api/create-subscription&nbsp;&#8594;
+     recebe&nbsp;init_point&nbsp;&#8594; redireciona para Checkout Pro do MP</li>
+ <li class=MsoNormal>Após pagamento, URL de
+     retorno:&nbsp;/dashboard?payment=success&amp;plan={plan}&nbsp;&#8594;
+     chama RPC&nbsp;update_my_plan</li>
+ <li class=MsoNormal>Webhook (placeholder):&nbsp;/api/webhook/mercadopago</li>
+ <li class=MsoNormal>Token:&nbsp;MERCADO_PAGO_ACCESS_TOKEN&nbsp;(atualmente
+     sandbox, trocar para production)</li>
+ <li class=MsoNormal>Preços: Básico R$3,99/mês ou R$39/ano; Premium R$9,90/mês
+     ou R$99/ano</li>
+</ul>
+
+<p class=MsoNormal>6.2 ViaCEP</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>Integração no MyData.jsx: ao digitar CEP, busca endereço
+     via&nbsp;<a href="https://viacep.com.br/ws/%7Bcep%7D/json/" target="_blank">https://viacep.com.br/ws/{cep}/json/</a>&nbsp;e
+     preenche automaticamente rua, bairro, cidade, estado.</li>
+</ul>
+
+<p class=MsoNormal>6.3 WhatsApp Web</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>Deep links:&nbsp;<a
+     href="https://wa.me/%7Bphone%7D?text=%7bmessage%7d" target="_blank">https://wa.me/{phone}?text={message}</a></li>
+ <li class=MsoNormal>Usado em: notificação de emergência (LandingPage),
+     notificar família (EmergencyPage)</li>
+</ul>
+
+<p class=MsoNormal>6.4 Google Maps</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>Link de localização:&nbsp;<a
+     href="https://www.google.com/maps?q=%7blat%7d,%7blng%7d" target="_blank">https://www.google.com/maps?q={lat},{lng}</a></li>
+</ul>
+
+<p class=MsoNormal>6.5 Geolocation API</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>Navigator.geolocation para obter posição do socorrista e
+     compartilhar com contatos de emergência</li>
+</ul>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=0 width="100%" align=center>
+
+</div>
+
+<p class=MsoNormal><b>7. Planos e Limites</b></p>
+
+<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 width=656
+ style='width:492.0pt;border-collapse:collapse;border:none'>
+ <thead>
+  <tr>
+   <td valign=top style='border:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Recurso</p>
+   </td>
+   <td valign=top style='border:solid windowtext 1.0pt;border-left:none;
+   padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Free</p>
+   </td>
+   <td valign=top style='border:solid windowtext 1.0pt;border-left:none;
+   padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Básico (R$3,99/mês)</p>
+   </td>
+   <td valign=top style='border:solid windowtext 1.0pt;border-left:none;
+   padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Premium (R$9,90/mês)</p>
+   </td>
+  </tr>
+ </thead>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Contatos de emergência</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>2</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>5</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Ilimitado</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>QR Code</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Simples</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Personalizado</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Personalizado</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Upload de documentos</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal><span style='font-family:"Segoe UI Symbol",sans-serif'>&#10007;</span></p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>&#10003; (3 docs)</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>&#10003; (3 docs)</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Dados médicos</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal><span style='font-family:"Segoe UI Symbol",sans-serif'>&#10007;</span></p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>&#10003;</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>&#10003;</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Suporte</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Padrão</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Prioritário</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>VIP</p>
+  </td>
+ </tr>
+</table>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=0 width="100%" align=center>
+
+</div>
+
+<p class=MsoNormal><b>8. Migrations (ordem de execução)</b></p>
+
+<ol style='margin-top:0cm' start=1 type=1>
+ <li class=MsoNormal>001_initial_schema.sql&nbsp;— Schemas + triggers + storage</li>
+ <li class=MsoNormal>002_emergency_logs.sql&nbsp;— Logs de acesso</li>
+ <li class=MsoNormal>003_admin_role.sql&nbsp;— Role admin + RPCs</li>
+ <li class=MsoNormal>004_admin_audit.sql&nbsp;— Audit logs + admin RPCs com
+     filtros</li>
+ <li class=MsoNormal>005_security_questions.sql&nbsp;— Handle + perguntas
+     segurança + RPCs</li>
+ <li class=MsoNormal>008_admin_fixes.sql&nbsp;— Correções admin RPCs</li>
+ <li class=MsoNormal>009_address_and_location.sql&nbsp;— Endereço + ViaCEP</li>
+ <li class=MsoNormal>010_fix_rls_emergency_contacts.sql&nbsp;— Fix RLS público</li>
+ <li class=MsoNormal>011_remove_orphan_accounts.sql&nbsp;— Remove contas órfãs
+     específicas</li>
+ <li class=MsoNormal>012_mercadopago_rpc.sql&nbsp;— RPC&nbsp;update_my_plan</li>
+ <li class=MsoNormal>013_storage_avatars.sql&nbsp;— Bucket avatars + policies</li>
+ <li class=MsoNormal>014_cleanup_orphans.sql&nbsp;— Limpeza geral órfãos</li>
+</ol>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=0 width="100%" align=center>
+
+</div>
+
+<p class=MsoNormal><b>9. Variáveis de Ambiente (.env)</b></p>
+
+<p class=MsoNormal>VITE_SUPABASE_URL=https://{project}.supabase.co</p>
+
+<p class=MsoNormal>VITE_SUPABASE_ANON_KEY={anon_key}</p>
+
+<p class=MsoNormal>MERCADO_PAGO_ACCESS_TOKEN={token_sandbox_or_prod}</p>
+
+<p class=MsoNormal>SITE_URL=https://ahlembrei.com.br</p>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=0 width="100%" align=center>
+
+</div>
+
+<p class=MsoNormal><b>10. Scripts</b></p>
+
+<p class=MsoNormal>{</p>
+
+<p class=MsoNormal>  &quot;dev&quot;: &quot;vite --host :: --port 3000&quot;,</p>
+
+<p class=MsoNormal>  &quot;build&quot;: &quot;vite build&quot;,</p>
+
+<p class=MsoNormal>  &quot;start&quot;: &quot;node server.js&quot;,</p>
+
+<p class=MsoNormal>  &quot;postinstall&quot;: &quot;npm run build&quot;,</p>
+
+<p class=MsoNormal>  &quot;preview&quot;: &quot;vite preview --host :: --port
+3000&quot;,</p>
+
+<p class=MsoNormal>  &quot;lint&quot;: &quot;eslint . --quiet&quot;</p>
+
+<p class=MsoNormal>}</p>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=0 width="100%" align=center>
+
+</div>
+
+<p class=MsoNormal><b>11. Estrutura de Arquivos</b></p>
+
+<p class=MsoNormal><span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+src/</p>
+
+<p class=MsoNormal>&#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+main.jsx                        # Entry point</p>
+
+<p class=MsoNormal>&#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+App.jsx                         # Router + providers</p>
+
+<p class=MsoNormal>&#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+index.css                       # Tailwind + vars CSS</p>
+
+<p class=MsoNormal>&#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+lib/</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+supabaseClient.js           # Cliente Supabase</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+emergencyApi.js             # API layer (40+ funções)</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   &#9492;&#9472;&#9472;
+customSupabaseClient.js     # Cliente alternativo</p>
+
+<p class=MsoNormal>&#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+contexts/</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+SupabaseAuthContext.jsx      # Auth provider principal</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   &#9492;&#9472;&#9472; AuthContext.jsx             
+# Re-export (deprecated)</p>
+
+<p class=MsoNormal>&#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+pages/</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+LandingPage.jsx             # Home + busca emergência</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+EmergencyPage.jsx           # Página pública emergência</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+Dashboard.jsx               # Dashboard layout</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+LoginPage.jsx               # Login</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+RegisterPage.jsx            # Cadastro</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+AdminPage.jsx               # Admin panel</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+ResetPassword.jsx           # Reset senha</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+TermsPage.jsx               # Termos de Uso</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+PrivacyPage.jsx             # Privacidade</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+HomePage.jsx                # (não usado)</p>
+
+<p class=MsoNormal>&#9474;   &#9474;   &#9492;&#9472;&#9472;
+ResetPasswordPage.jsx       # (não usado)</p>
+
+<p class=MsoNormal>&#9474;   &#9492;&#9472;&#9472; components/</p>
+
+<p class=MsoNormal>&#9474;       <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+dashboard/</p>
+
+<p class=MsoNormal>&#9474;       &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+Overview.jsx            # Visão geral + incompleto alert</p>
+
+<p class=MsoNormal>&#9474;       &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+MyData.jsx              # Dados pessoais + foto</p>
+
+<p class=MsoNormal>&#9474;       &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+EmergencyContacts.jsx   # CRUD contatos emergência</p>
+
+<p class=MsoNormal>&#9474;       &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+MedicalInfo.jsx         # Dados médicos</p>
+
+<p class=MsoNormal>&#9474;       &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+Documents.jsx           # Upload documentos</p>
+
+<p class=MsoNormal>&#9474;       &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+Subscription.jsx        # Planos + MP</p>
+
+<p class=MsoNormal>&#9474;       &#9474;   <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+Header.jsx             # Top bar</p>
+
+<p class=MsoNormal>&#9474;       &#9474;   &#9492;&#9472;&#9472;
+Sidebar.jsx            # Navegação lateral</p>
+
+<p class=MsoNormal>&#9474;       &#9492;&#9472;&#9472;
+ui/                         # Radix UI primitives (50+)</p>
+
+<p class=MsoNormal>&#9474;           <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+button.jsx, dialog.jsx, toast.jsx, ...</p>
+
+<p class=MsoNormal><span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+server.js                           # Express backend</p>
+
+<p class=MsoNormal><span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+package.json</p>
+
+<p class=MsoNormal><span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+vite.config.js</p>
+
+<p class=MsoNormal><span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+tailwind.config.js</p>
+
+<p class=MsoNormal><span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+postcss.config.js</p>
+
+<p class=MsoNormal><span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+index.html</p>
+
+<p class=MsoNormal><span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+.env                                # Credenciais</p>
+
+<p class=MsoNormal><span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+.version                            # 1.0.0</p>
+
+<p class=MsoNormal><span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+supabase/migrations/                # 12 migrations SQL</p>
+
+<p class=MsoNormal>&#9492;&#9472;&#9472; docs/                               #
+INPI + ToS + Privacidade</p>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=0 width="100%" align=center>
+
+</div>
+
+<p class=MsoNormal><b>12. Fluxos de Usuário</b></p>
+
+<p class=MsoNormal>12.1 Acesso à Emergência (sem login)</p>
+
+<p class=MsoNormal>LandingPage &#8594; digita @apelido OU cola QR Code/URL</p>
+
+<p class=MsoNormal>    &#8595;</p>
+
+<p class=MsoNormal>[busca por handle encontra usuário]</p>
+
+<p class=MsoNormal>    &#8595;</p>
+
+<p class=MsoNormal>Modal: &quot;Você está ajudando esta pessoa?&quot;</p>
+
+<p class=MsoNormal>    <span style='font-family:"Arial",sans-serif'>&#9500;</span>&#9472;&#9472;
+&quot;Sim, consciente&quot; &#8594; 2 perguntas segurança &#8594; acerta &#8594;
+/emergency/{id}</p>
+
+<p class=MsoNormal>    &#9492;&#9472;&#9472; &quot;Sim, inconsciente&quot;
+&#8594; notifica WhatsApp contato primário &#8594;
+/emergency/{id}?mode=unconscious</p>
+
+<p class=MsoNormal>12.2 Cadastro</p>
+
+<p class=MsoNormal>RegisterPage &#8594; nome + email + senha + aceite termos</p>
+
+<p class=MsoNormal>    &#8595;</p>
+
+<p class=MsoNormal>Supabase Auth signUp</p>
+
+<p class=MsoNormal>    &#8595;</p>
+
+<p class=MsoNormal>Trigger handle_new_user() &#8594; cria profiles row</p>
+
+<p class=MsoNormal>    &#8595;</p>
+
+<p class=MsoNormal>Redirect para /dashboard</p>
+
+<p class=MsoNormal>12.3 Login</p>
+
+<p class=MsoNormal>LoginPage &#8594; email + senha</p>
+
+<p class=MsoNormal>    &#8595;</p>
+
+<p class=MsoNormal>Supabase Auth signInWithPassword</p>
+
+<p class=MsoNormal>    &#8595;</p>
+
+<p class=MsoNormal>AuthContext.onAuthStateChange &#8594; enrichUser (busca
+plan_type, role)</p>
+
+<p class=MsoNormal>    &#8595;</p>
+
+<p class=MsoNormal>Dashboard</p>
+
+<p class=MsoNormal>12.4 Pagamento (Mercado Pago)</p>
+
+<p class=MsoNormal>Dashboard &#8594; Subscription &#8594; seleciona plano +
+billing</p>
+
+<p class=MsoNormal>    &#8595;</p>
+
+<p class=MsoNormal>Clica &quot;Assinar&quot; &#8594; POST
+/api/create-subscription</p>
+
+<p class=MsoNormal>    &#8595;</p>
+
+<p class=MsoNormal>Checkout Pro MP (redirect externo)</p>
+
+<p class=MsoNormal>    &#8595;</p>
+
+<p class=MsoNormal>Pagamento OK &#8594;
+/dashboard?payment=success&amp;plan=basic</p>
+
+<p class=MsoNormal>    &#8595;</p>
+
+<p class=MsoNormal>useEffect &#8594; supabase.rpc('update_my_plan') &#8594;
+refreshUser()</p>
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=0 width="100%" align=center>
+
+</div>
+
+<p class=MsoNormal><b>13. Observações Técnicas</b></p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal>O banco PostgreSQL tem RLS ativado em todas as tabelas
+     públicas. As policies &quot;Anyone can view&quot; são essenciais para o
+     funcionamento da página de emergência (anon key precisa ler profiles,
+     emergency_contacts, medical_records).</li>
+ <li class=MsoNormal>O&nbsp;auth.users&nbsp;é gerenciado exclusivamente pelo
+     Supabase Auth. A trigger&nbsp;handle_new_user()&nbsp;sincroniza
+     com&nbsp;profiles.</li>
+ <li class=MsoNormal>As migrations 001-005 foram aplicadas via CLI Supabase.
+     Migrations 008-014 precisam ser executadas manualmente no SQL Editor.</li>
+ <li class=MsoNormal>O server Express roda como SPA fallback: qualquer rota que
+     não seja&nbsp;/api/*&nbsp;serve&nbsp;dist/index.html.</li>
+ <li class=MsoNormal>Contas órfãs (auth.users sem profiles) podem ocorrer se a
+     trigger falhar. Migration 014 limpa automaticamente.</li>
+ <li class=MsoNormal>Mercado Pago está em modo sandbox. Trocar token para
+     production quando for para o ar.</li>
+</ul>
+
+<p class=MsoNormal>para o registro no inpi tem uma pergunta de qual tipo de
+algoritmo hash é usado no sistema, você pode me dizer e ajudar a responder? as
+opções são: SHA224, SHA256, SHA512 ou outros se outros qual o nome ?</p>
+
+<p class=MsoNormal>O algoritmo usado é&nbsp;bcrypt&nbsp;(Blowfish). O sistema
+usa a extensão&nbsp;pgcrypto&nbsp;do PostgreSQL
+com&nbsp;gen_salt('bf')&nbsp;+&nbsp;crypt()&nbsp;—&nbsp;'bf'&nbsp;= Blowfish, o
+mesmo algoritmo do bcrypt.</p>
+
+<p class=MsoNormal>Nenhuma das opções SHA (224/256/512) corresponde. A resposta
+para o INPI é:</p>
+
+<p class=MsoNormal>&quot;outros — bcrypt (Blowfish)&quot;</p>
+
+<p class=MsoNormal>Detalhe do código (005_security_questions.sql):</p>
+
+<p class=MsoNormal>-- Hash (armazenamento):</p>
+
+<p class=MsoNormal>INSERT INTO ... VALUES (..., crypt(p_answer,
+gen_salt('bf')))</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>-- Verificação:</p>
+
+<p class=MsoNormal>RETURN stored_hash = crypt(p_answer, stored_hash);</p>
+
+<p class=MsoNormal>esta tambem me pedindo um resumo digital hash, você pode me
+dizer oque preencher ?</p>
+
+<p class=MsoNormal>Vou gerar o hash do arquivo ZIP que já preparamos para o
+INPI:</p>
+
+<p class=MsoNormal>O ZIP está desatualizado (13/07). Vou regenerar com a versão
+atual e gerar o hash:</p>
+
+<p class=MsoNormal>Preencha no formulário do INPI:</p>
+
+<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 width=656
+ style='width:492.0pt;border-collapse:collapse;border:none'>
+ <thead>
+  <tr>
+   <td valign=top style='border:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Campo</p>
+   </td>
+   <td valign=top style='border:solid windowtext 1.0pt;border-left:none;
+   padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+   <p class=MsoNormal>Valor</p>
+   </td>
+  </tr>
+ </thead>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Algoritmo</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>SHA256</p>
+  </td>
+ </tr>
+ <tr>
+  <td valign=top style='border:solid windowtext 1.0pt;border-top:none;
+  padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>Resumo digital hash</p>
+  </td>
+  <td valign=top style='border-top:none;border-left:none;border-bottom:solid windowtext 1.0pt;
+  border-right:solid windowtext 1.0pt;padding:9.0pt 9.0pt 9.0pt 9.0pt'>
+  <p class=MsoNormal>F27F22F9303EB93E031C36F95C30FE4AE11E520D11C5B0DF6375E0CF669F984D</p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal>O ZIP&nbsp;docs/inpi/ahlembrei_codigo_fonte.zip&nbsp;foi
+atualizado com a versão mais recente do código (commit&nbsp;8295f34).</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>

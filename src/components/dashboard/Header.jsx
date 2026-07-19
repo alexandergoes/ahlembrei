@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, ChevronDown, LogOut, User, Menu } from 'lucide-react';
+import { ChevronDown, LogOut, User, Menu } from 'lucide-react';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
@@ -27,13 +27,6 @@ const Header = ({ onMenuClick, activeTab, onTabChange }) => {
     }
   };
 
-  const handleNotificationsClick = () => {
-    toast({
-      title: "🚧 Esta funcionalidade não está implementada ainda",
-      description: "Mas não se preocupe! Você pode solicitar na sua próxima mensagem! 🚀",
-    });
-  };
-
   return (
     <header className="flex-shrink-0 bg-white border-b border-gray-200">
       <div className="flex items-center justify-between h-16 px-6">
@@ -41,12 +34,6 @@ const Header = ({ onMenuClick, activeTab, onTabChange }) => {
           <Menu className="w-6 h-6" />
         </button>
         <div className="flex items-center space-x-6">
-          <button
-            onClick={handleNotificationsClick}
-            className="p-2 text-gray-500 rounded-full hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring"
-          >
-            <Bell className="w-6 h-6" />
-          </button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

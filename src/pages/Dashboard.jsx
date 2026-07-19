@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Component } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import Sidebar from '@/components/dashboard/Sidebar';
@@ -9,6 +9,12 @@ import EmergencyContacts from '@/components/dashboard/EmergencyContacts';
 import MedicalInfo from '@/components/dashboard/MedicalInfo';
 import Documents from '@/components/dashboard/Documents';
 import Subscription from '@/components/dashboard/Subscription';
+
+class ErrorBoundary extends Component {
+  constructor(props) { super(props); this.state = { hasError: false }; }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() { return this.state.hasError ? <div className="p-8 text-center text-gray-500">Erro ao carregar. <button onClick={() => this.setState({ hasError: false })} className="text-blue-600 underline ml-1">Tentar novamente</button></div> : this.props.children; }
+}
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
@@ -60,7 +66,7 @@ const Dashboard = () => {
         <Header onMenuClick={() => setSidebarOpen(true)} activeTab={activeTab} onTabChange={setActiveTab} />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
           <div className="container mx-auto">
-            {renderContent()}
+            <ErrorBoundary key={activeTab}>{renderContent()}</ErrorBoundary>
           </div>
         </main>
       </div>
