@@ -75,7 +75,8 @@ const EmergencyPage = () => {
 
   const handleNotifyFamily = async () => {
     const primaryContact = contacts.find(c => c.is_primary) || contacts[0];
-    if (!primaryContact?.whatsapp) return;
+    const number = primaryContact?.whatsapp || primaryContact?.phone;
+    if (!number) return;
 
     try {
       const position = await new Promise((resolve, reject) => {
@@ -84,10 +85,10 @@ const EmergencyPage = () => {
       const { latitude, longitude } = position.coords;
       const mapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
       const message = `Olá, estou ajudando ${profile.full_name} em uma emergência. Localização: ${mapsLink}`;
-      window.open(`https://wa.me/${primaryContact.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`, '_blank');
+      window.location.href = `https://wa.me/${number.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
     } catch {
       const message = `Olá, estou ajudando ${profile.full_name} em uma emergência.`;
-      window.open(`https://wa.me/${primaryContact.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`, '_blank');
+      window.location.href = `https://wa.me/${number.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
     }
     setPhoneRevealed(true);
     setNotifySent(true);

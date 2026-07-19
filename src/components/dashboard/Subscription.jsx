@@ -42,7 +42,7 @@ const Subscription = () => {
     },
     basic: {
       name: 'Básico',
-      price: { monthly: 3.99, yearly: 39 },
+      price: { monthly: 4.99, yearly: 49 },
       features: [
         { text: 'Até 5 contatos', included: true },
         { text: 'QR Code personalizado', included: true },
