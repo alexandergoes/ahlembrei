@@ -13,9 +13,13 @@ const Subscription = () => {
   const [billingCycle, setBillingCycle] = useState('monthly');
 
   useEffect(() => {
+    let plan = searchParams.get('plan');
     const payment = searchParams.get('payment');
-    const plan = searchParams.get('plan');
-    if (payment === 'success' && plan) {
+    const extRef = searchParams.get('external_reference');
+    const status = searchParams.get('collection_status');
+
+    if (!plan && extRef) plan = extRef.split('-')[1];
+    if ((payment === 'success' || status === 'approved') && plan) {
       supabase.rpc('update_my_plan', { new_plan: plan }).then(({ error }) => {
         if (error) {
           toast({ title: 'Erro ao ativar plano', description: error.message });
@@ -214,7 +218,7 @@ const Subscription = () => {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-gray-600">Seu plano atual é</p>
-            <p className="text-2xl font-bold text-blue-600 capitalize">{user.plan}</p>
+            <p className="text-2xl font-bold text-blue-600 capitalize">{user.plan === 'free' ? 'Grátis' : user.plan}</p>
           </div>
         </div>
       </motion.div>
