@@ -22,11 +22,14 @@ const Overview = ({ onTabChange }) => {
 
   useEffect(() => {
     if (!user?.id) return;
-    import('@/lib/emergencyApi').then(({ fetchMyProfile, fetchEmergencyContacts }) => {
-      fetchMyProfile(user.id).then(async (data) => {
-        const contacts = await fetchEmergencyContacts(user.id);
-        setProfile({ ...data, contactCount: contacts.length, hasPrimary: contacts.some(c => c.is_primary) });
-      });
+    import('@/lib/emergencyApi').then(async ({ fetchMyProfile, fetchEmergencyContacts, fetchDocuments, fetchMedicalRecords }) => {
+      const data = await fetchMyProfile(user.id);
+      const [contacts, docs, medical] = await Promise.all([
+        fetchEmergencyContacts(user.id),
+        fetchDocuments(user.id),
+        fetchMedicalRecords(user.id),
+      ]);
+      setProfile({ ...data, contactCount: contacts.length, documentCount: docs.length, hasPrimary: contacts.some(c => c.is_primary), hasMedical: !!medical });
     });
   }, [user?.id]);
 
@@ -74,13 +77,13 @@ const Overview = ({ onTabChange }) => {
     },
     {
       label: 'Documentos',
-      value: profile?.plan_type === 'free' ? '0' : '0',
+      value: profile?.documentCount ?? '0',
       max: user?.plan === 'free' ? '0' : '3',
       icon: FileText, bgColor: 'bg-green-100', textColor: 'text-green-600', isPremium: user?.plan === 'free',
     },
     {
       label: 'Informações Médicas',
-      value: user?.plan === 'free' ? '0' : '1',
+      value: profile?.hasMedical ? '1' : '0',
       max: '1',
       icon: Heart, bgColor: 'bg-red-100', textColor: 'text-red-600', isPremium: user?.plan === 'free',
     },
