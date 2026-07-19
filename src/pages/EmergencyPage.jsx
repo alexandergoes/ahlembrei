@@ -49,7 +49,7 @@ const EmergencyPage = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => setHelperLocation(`${pos.coords.latitude},${pos.coords.longitude}`),
-        () => {}
+        () => { }
       );
     }
   }, []);
