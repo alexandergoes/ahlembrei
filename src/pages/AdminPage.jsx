@@ -363,6 +363,9 @@ const AdminPage = () => {
       } else if (action === 'promote') {
         await adminUpdateUserRole(target.id, 'admin');
         showToast(`${target.full_name} promovido a admin`);
+      } else if (action === 'promote_super') {
+        await adminUpdateUserRole(target.id, 'super_admin');
+        showToast(`${target.full_name} promovido a super admin`);
       } else if (action === 'demote') {
         await adminUpdateUserRole(target.id, 'user');
         showToast(`${target.full_name} rebaixado para usuário`);
@@ -385,6 +388,8 @@ const AdminPage = () => {
         };
       case 'promote':
         return { title: 'Promover para admin', message: `Tem certeza que deseja promover ${name} a administrador?`, danger: false };
+      case 'promote_super':
+        return { title: 'Promover para Super Admin', message: `Tem certeza que deseja promover ${name} a Super Administrador? Esta ação dá controle total do sistema.`, danger: true };
       case 'demote':
         return { title: 'Rebaixar para usuário', message: `Tem certeza que deseja rebaixar ${name} para usuário comum?`, danger: true };
       default:
@@ -470,6 +475,7 @@ const AdminPage = () => {
             <option value="all">Todas as roles</option>
             <option value="user">Usuário</option>
             <option value="admin">Admin</option>
+            <option value="super_admin">Super Admin</option>
           </select>
           <select value={filters.plan} onChange={e => setFilters(f => ({...f, plan: e.target.value}))}
             className="px-3 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
@@ -518,9 +524,10 @@ const AdminPage = () => {
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        u.role === 'super_admin' ? 'bg-red-100 text-red-700 ring-1 ring-red-300' :
                         u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'
                       }`}>
-                        {u.role || 'user'}
+                        {u.role === 'super_admin' ? 'Super Admin' : (u.role || 'user')}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
@@ -545,12 +552,23 @@ const AdminPage = () => {
                         >
                           {u.active !== false ? 'Desativar' : 'Ativar'}
                         </button>
-                        {u.role === 'admin' ? (
-                          <button
-                            onClick={() => setConfirm({ action: 'demote', target: u })}
-                            disabled={actionLoading}
-                            className="px-2.5 py-1 text-xs font-medium rounded-lg bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50"
-                          >Rebaixar</button>
+                        {u.role === 'super_admin' ? (
+                          <span className="px-2.5 py-1 text-xs font-medium rounded-lg bg-gray-100 text-gray-400 inline-block">---</span>
+                        ) : u.role === 'admin' ? (
+                          <>
+                            <button
+                              onClick={() => setConfirm({ action: 'demote', target: u })}
+                              disabled={actionLoading}
+                              className="px-2.5 py-1 text-xs font-medium rounded-lg bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-50"
+                            >Rebaixar</button>
+                            {authUser?.role === 'super_admin' && (
+                              <button
+                                onClick={() => setConfirm({ action: 'promote_super', target: u })}
+                                disabled={actionLoading}
+                                className="px-2.5 py-1 text-xs font-medium rounded-lg bg-red-50 text-red-700 hover:bg-red-100 disabled:opacity-50"
+                              >Super</button>
+                            )}
+                          </>
                         ) : (
                           <button
                             onClick={() => setConfirm({ action: 'promote', target: u })}
