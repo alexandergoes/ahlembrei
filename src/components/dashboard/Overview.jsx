@@ -114,7 +114,18 @@ const Overview = ({ onTabChange }) => {
         className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
           <div className="mb-6 lg:mb-0">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Bem-vindo ao seu painel de emergência</h2>
+            <div className="flex items-center gap-3 mb-2">
+              <h2 className="text-3xl font-bold text-gray-900">Bem-vindo ao seu painel de emergência</h2>
+              <span className={`px-3 py-1 rounded-full text-sm font-bold ${
+                user?.plan === 'premium'
+                  ? 'bg-yellow-100 text-yellow-800 border border-yellow-300'
+                  : user?.plan === 'basic'
+                  ? 'bg-blue-100 text-blue-800 border border-blue-300'
+                  : 'bg-gray-100 text-gray-600 border border-gray-300'
+              }`}>
+                {user?.plan === 'free' ? 'Grátis' : user?.plan === 'basic' ? 'Básico' : 'Premium'}
+              </span>
+            </div>
             <p className="text-gray-600 text-lg">Suas informações estão seguras e prontas para situações críticas.</p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
