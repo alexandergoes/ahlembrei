@@ -6,7 +6,7 @@ import {
   AlertCircle, MapPin, Send, ChevronDown, ChevronUp, Bell, CheckCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { fetchEmergencyProfile, fetchEmergencyContacts, fetchMedicalRecords, logEmergencyAccess } from '@/lib/emergencyApi';
+import { fetchEmergencyProfile, fetchEmergencyContacts, fetchMedicalRecordsPublic, logEmergencyAccess } from '@/lib/emergencyApi';
 
 const EmergencyPage = () => {
   const { userId } = useParams();
@@ -29,7 +29,7 @@ const EmergencyPage = () => {
         const [profileData, contactsData, medicalData] = await Promise.all([
           fetchEmergencyProfile(userId),
           fetchEmergencyContacts(userId),
-          fetchMedicalRecords(userId),
+          fetchMedicalRecordsPublic(userId),
         ]);
         setProfile(profileData);
         setContacts(contactsData);

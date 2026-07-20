@@ -125,6 +125,18 @@ export const fetchMedicalRecords = async (userId) => {
   return data || null;
 };
 
+export const fetchMedicalRecordsPublic = async (userId) => {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const smartWorkerUrl = `${supabaseUrl}/functions/v1/smart-worker`;
+  const res = await fetch(smartWorkerUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId }),
+  });
+  if (!res.ok) throw new Error('Erro ao buscar dados médicos');
+  return res.json();
+};
+
 export const upsertMedicalRecords = async (userId, records) => {
   const { data, error } = await supabase
     .from('medical_records')
