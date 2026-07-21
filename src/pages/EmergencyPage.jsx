@@ -24,6 +24,14 @@ const EmergencyPage = () => {
   const [notifySent, setNotifySent] = useState(false);
 
   useEffect(() => {
+    const notified = sessionStorage.getItem('emergency_notified_' + userId);
+    if (notified === 'true') {
+      setNotifySent(true);
+      setPhoneRevealed(true);
+    }
+  }, [userId]);
+
+  useEffect(() => {
     const loadData = async () => {
       try {
         const [profileData, contactsData, medicalData] = await Promise.all([
@@ -45,14 +53,20 @@ const EmergencyPage = () => {
     loadData();
   }, [userId]);
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => setHelperLocation(`${pos.coords.latitude},${pos.coords.longitude}`),
-        () => { }
-      );
-    }
-  }, []);
+  const [sharingLocation, setSharingLocation] = useState(false);
+
+  const handleShareLocation = () => {
+    if (!navigator.geolocation) return;
+    setSharingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setHelperLocation(`${pos.coords.latitude},${pos.coords.longitude}`);
+        setSharingLocation(false);
+      },
+      () => { setSharingLocation(false); },
+      { timeout: 15000 }
+    );
+  };
 
   const handleCall = (phone) => {
     window.location.href = `tel:${phone}`;
@@ -95,6 +109,7 @@ const EmergencyPage = () => {
       const message = `Olá, estou ajudando ${profile.full_name} em uma emergência.`;
       window.location.href = `https://wa.me/${number.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
     }
+    sessionStorage.setItem('emergency_notified_' + userId, 'true');
     setPhoneRevealed(true);
     setNotifySent(true);
   };
@@ -207,7 +222,7 @@ const EmergencyPage = () => {
               </p>
             </div>
           )}
-          {helperLocation && (
+          {helperLocation ? (
             <div className="bg-green-50 rounded-xl p-4 border border-green-200">
               <p className="text-green-900 font-medium">📍 Localização atual do socorrista:</p>
               <a href={`https://www.google.com/maps?q=${helperLocation}`} target="_blank" rel="noopener noreferrer"
@@ -215,9 +230,17 @@ const EmergencyPage = () => {
                 Ver no Google Maps
               </a>
             </div>
-          )}
-          {!profile.address_street && !profile.address_city && !helperLocation && (
-            <p className="text-gray-500 text-sm">Localização não informada pelo usuário.</p>
+          ) : (
+            <div>
+              <Button onClick={handleShareLocation} disabled={sharingLocation}
+                variant="outline" className="w-full border-green-400 text-green-700 hover:bg-green-50">
+                <MapPin className="w-5 h-5 mr-2" />
+                {sharingLocation ? 'Obtendo localização...' : 'Compartilhar minha localização'}
+              </Button>
+              {!profile.address_street && !profile.address_city && (
+                <p className="text-gray-500 text-sm mt-2">Localização do perfil não informada.</p>
+              )}
+            </div>
           )}
         </motion.div>
 
