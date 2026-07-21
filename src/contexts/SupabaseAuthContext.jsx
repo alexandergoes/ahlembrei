@@ -5,12 +5,17 @@ const AuthContext = createContext(null);
 
 async function enrichUser(authUser) {
   if (!authUser) return null;
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('plan_type, role')
-    .eq('id', authUser.id)
-    .single();
-  return { ...authUser, plan: profile?.plan_type || 'free', role: profile?.role || 'user' };
+  try {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('plan_type, role')
+      .eq('id', authUser.id)
+      .single();
+    return { ...authUser, plan: profile?.plan_type || 'free', role: profile?.role || 'user' };
+  } catch (err) {
+    console.warn('enrichUser error:', err);
+    return { ...authUser, plan: 'free', role: 'user' };
+  }
 }
 
 export function AuthProvider({ children }) {
@@ -18,15 +23,23 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+
     const init = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (error) {
-        console.warn('getUser error:', error.message);
-        setUser(null);
-      } else {
-        setUser(await enrichUser(data?.user ?? null));
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (error) {
+          console.warn('getUser error:', error.message);
+          if (!cancelled) setUser(null);
+        } else {
+          if (!cancelled) setUser(await enrichUser(data?.user ?? null));
+        }
+      } catch (err) {
+        console.warn('init error:', err);
+        if (!cancelled) setUser(null);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      setLoading(false);
     };
 
     init();
@@ -34,11 +47,19 @@ export function AuthProvider({ children }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setUser(await enrichUser(session?.user ?? null));
-      setLoading(false);
+      try {
+        const enriched = await enrichUser(session?.user ?? null);
+        if (!cancelled) setUser(enriched);
+      } catch (err) {
+        console.warn('onAuthStateChange error:', err);
+        if (!cancelled) setUser(null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     });
 
     return () => {
+      cancelled = true;
       subscription.unsubscribe();
     };
   }, []);

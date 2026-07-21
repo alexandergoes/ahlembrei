@@ -121,7 +121,10 @@ export const fetchMedicalRecords = async (userId) => {
     .eq('user_id', userId)
     .single();
 
-  if (error && error.code !== 'PGRST116') throw error;
+  if (error) {
+    console.warn('fetchMedicalRecords direto falhou (406?), tentando smart-worker...', error);
+    return fetchMedicalRecordsPublic(userId);
+  }
   return data || null;
 };
 

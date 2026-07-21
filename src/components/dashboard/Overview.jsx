@@ -30,7 +30,7 @@ const Overview = ({ onTabChange }) => {
         fetchMedicalRecords(user.id),
       ]);
       setProfile({ ...data, contactCount: contacts.length, documentCount: docs.length, hasPrimary: contacts.some(c => c.is_primary), hasMedical: !!medical });
-    });
+    }).catch(err => console.error('Overview load error:', err));
   }, [user?.id]);
 
   const missing = [];
