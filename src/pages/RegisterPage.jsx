@@ -95,20 +95,29 @@ const RegisterPage = () => {
 
   const handleSocialLogin = async (provider) => {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${window.location.origin}/dashboard`,
-      },
-    });
-    if (error) {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+        },
+      });
+      if (error) {
+        toast({
+          title: "Erro no login social",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
       toast({
         title: "Erro no login social",
-        description: error.message,
+        description: 'Não foi possível conectar. Tente novamente.',
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
