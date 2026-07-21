@@ -13,6 +13,7 @@ import ResetPassword from './pages/ResetPassword';
 import AdminPage from './pages/AdminPage';
 import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
+import AuthCallback from './pages/CallbackPage';
 import { AuthProvider } from './contexts/SupabaseAuthContext';
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/dashboard/*" element={<Dashboard />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/emergency/:userId" element={<EmergencyPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/reset-password" element={<ResetPassword />} />
