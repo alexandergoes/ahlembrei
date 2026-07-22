@@ -34,15 +34,17 @@ const EmergencyPage = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [profileData, contactsData, medicalData] = await Promise.all([
+        const [profileData, contactsData] = await Promise.all([
           fetchEmergencyProfile(userId),
           fetchEmergencyContacts(userId),
-          fetchMedicalRecordsPublic(userId),
         ]);
         setProfile(profileData);
         setContacts(contactsData);
-        setMedical(medicalData);
         logEmergencyAccess(userId);
+
+        fetchMedicalRecordsPublic(userId)
+          .then((data) => setMedical(data))
+          .catch((err) => console.warn('Medical records unavailable:', err));
       } catch (err) {
         console.error('Error loading emergency data:', err);
         setError('Não foi possível carregar as informações de emergência.');
