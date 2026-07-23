@@ -18,7 +18,7 @@ const Overview = ({ onTabChange }) => {
   const [copied, setCopied] = useState(false);
   const [profile, setProfile] = useState(null);
 
-  const emergencyUrl = `${window.location.origin}/emergency/${user.id}`;
+  const emergencyUrl = user?.id ? `${window.location.origin}/emergency/${user.id}` : '';
 
   useEffect(() => {
     if (!user?.id) return;

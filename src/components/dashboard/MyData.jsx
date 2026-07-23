@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
 import { toast } from '@/components/ui/use-toast';
 import { fetchMyProfile, updateMyProfile, fetchSecurityQuestions } from '@/lib/emergencyApi';
+import { supabase } from '@/lib/supabaseClient';
 
 const MyData = () => {
   const { user } = useAuth();
